@@ -1,0 +1,211 @@
+// This is the constructor for the game
+Tutorial2 = function()
+{
+	// Make sure to call the constructor for the superclass
+	Tutorial2.superclass.constructor.call(this);
+
+	// Game Entities
+	this.mPaddle = null;
+	this.mBall = null;
+	this.mScoreText = null;
+	this.mBestScoreText = null;
+
+	// Game State
+	this.mBouncing = false;
+	this.mBounceTime = 0;
+	this.mBallHeight = 0;
+	this.mDriftX = 0;
+	this.mDriftY = 0;
+	this.mDriftFactor = 0;
+
+	// Scores
+	this.mScore = 0;
+	this.mBestScore = 0;
+
+	var gameAssets = [
+        {id : 'background',url : 'assets/images/background.jpg'},
+        {id : 'paddle',url : 'assets/images/paddle.png'},
+        {id : 'ball',url : 'assets/images/ball.png'}
+    ];
+
+	// Tell the game about this list of assets - the "required" category is
+	// for assets that need to be fully loaded before the game can start
+	this.assetManager.assignImageAssetList("required", gameAssets);
+}
+
+
+// New methods and overrides for your game class will go in here
+Tutorial2.prototype =
+{
+	// TGE.Game method override - called when the gameplay starts
+	subclassStartPlaying : function()
+    {
+		// Clear everything in the scene
+		this.clearScene();
+
+		// Fill the background in with white
+		this.setBackgroundColor("#fff");
+
+        // Score text
+		this.mScoreText = this.stage.addChild(new TGE.Text().setup({
+            x:this.stage.percentageOfWidth(0.5),
+            y:this.stage.percentageOfHeight(0.095),
+            text:"SCORE: 0",
+            font:"bold 62px Arial",
+            color:"#454"
+        }));
+
+        // Best score text
+        this.mBestScoreText = this.stage.addChild(new TGE.Text().setup({
+            x:this.stage.percentageOfWidth(0.5),
+            y:this.stage.percentageOfHeight(0.91),
+            text:"BEST SCORE: " + this.mBestScore,
+            font:"bold 35px Arial",
+            color:"#454"
+        }));
+
+		// Add the background image
+		this.stage.addChild(new TGE.Sprite().setup({
+            x:this.stage.percentageOfWidth(0.5),
+            y:this.stage.percentageOfHeight(0.5),
+            image:"background"
+        }));
+
+		this.mPaddle = this.stage.addChild(new TGE.Sprite().setup({
+            x:this.stage.percentageOfWidth(0.5),
+            y:this.stage.percentageOfHeight(0.5),
+            image:"paddle"
+        }));
+
+		this.mBall = this.stage.addChild(new TGE.Sprite().setup({
+            x:this.stage.percentageOfWidth(0.5),
+            y:this.stage.percentageOfHeight(0.5),
+            image:"ball"
+        }));
+
+		// Initialize game variables
+		this.mBouncing = false;
+		this.mBounceTime = 0;
+		this.mBallHeight = 0;
+		this.mDriftFactor = 100;
+		this.mDriftX = 0;
+		this.mDriftY = 0;
+		this.mScore = 0;
+	},
+
+	// TGE.Game method override - called when the use clicks the mouse (or taps on mobile)
+	subclassMouseDown: function()
+    {
+		var t = 100;
+		if(!this.mPlaying || this.mBouncing || (Math.abs(this.mMouseX - this.Width() / 2) > t ||
+            Math.abs(this.mMouseY - this.Height() / 2) > t))
+        {
+			return;
+		}
+
+		// Start bouncing the ball
+		this.mBouncing = true;
+	},
+
+	// TGE.Game method override - called every update cycle with elapsed time since last cycle started
+	subclassUpdateGame: function(elapsedTime)
+    {
+		// Set the scale of the ball to make it appear closer when it's higher
+		this.mBall.scaleX = this.mBall.scaleY = 0.3 + this.mBallHeight * 0.3;
+
+		// If the ball hasn't started bouncing, don't do anything else
+		if(!this.mBouncing)
+        {
+			return;
+		}
+
+		// If the mouse is down, move the handle of the paddle to the mouse position
+		if(this.IsMouseDown() || !TGE.BrowserDetect.isMobileDevice)
+        {
+			this.mPaddle.x = this.mMouseX;
+			this.mPaddle.y = this.mMouseY;
+		}
+
+		// Update the ball
+		this.updateBall(elapsedTime);
+
+		// Update the score displays
+		this.mScoreText.text = "SCORE: " + this.mScore.toString();
+		this.mBestScoreText.text = "BEST SCORE: " + this.mBestScore.toString();
+	},
+
+	// TGE.Game method override - called when gameplay ends
+	subclassEndGame: function()
+    {
+		// Stop bouncing the ball
+		this.mBouncing = false;
+
+		// Did they beat their highscore?
+		if(this.mScore > this.mBestScore)
+        {
+			this.mBestScore = this.mScore;
+		}
+	},
+
+	// Our own function - update the properties of the ping pong ball
+	updateBall: function(elapsedTime)
+    {
+		// Simulate the height of the ball using the absolute value of a sinewave
+		var bounceSpeed = 4;
+		var oldSinValue = Math.sin(this.mBounceTime * bounceSpeed);
+		this.mBounceTime += elapsedTime;
+		var newSinValue = Math.sin(this.mBounceTime * bounceSpeed);
+		this.mBallHeight = Math.abs(newSinValue);
+
+		// See if the ball hit the table or paddle by checking if the original sinewave crossed over zero
+		if(oldSinValue >= 0 && newSinValue < 0 || oldSinValue < 0 && newSinValue >= 0)
+        {
+			this.ballLanded();
+		}
+
+		this.mBall.x += this.mDriftX * elapsedTime;
+		this.mBall.y += this.mDriftY * elapsedTime;
+	},
+
+	// Our own function - called when the ball hits the table or paddle
+	ballLanded: function()
+    {
+		// If the ball hit the paddle give the player a point, otherwise the game is over.
+		// Compare the distance from the ball to the paddle against the radius of the paddle
+		var xDist = this.mBall.x - this.mPaddle.x;
+		var yDist = this.mBall.y - this.mPaddle.y;
+		var distanceFromPaddleCenter = Math.sqrt((xDist * xDist) + (yDist * yDist));
+		var paddleRadius = 54;
+		if(distanceFromPaddleCenter <= paddleRadius)
+        {
+			this.mScore++;
+		}
+        else
+        {
+			// Ball didn't hit the paddle
+			this.EndGame();
+		}
+
+		// Apply some drift to the ball - the farther from the center of the paddle, the greater the drift.
+		if(this.mScore > 2)
+        {
+			var offCenterPercentage = distanceFromPaddleCenter / paddleRadius;
+			var partialDriftFactor = this.mDriftFactor / 5;
+			this.mDriftX = (Math.random() * partialDriftFactor * 2) - partialDriftFactor + this.mDriftFactor * offCenterPercentage * (xDist < 0 ? -1 : 1);
+			this.mDriftY = (Math.random() * partialDriftFactor * 2) - partialDriftFactor + this.mDriftFactor * offCenterPercentage * (yDist < 0 ? -1 : 1);
+
+			// Every 3 bounces increase the drift factor to make it harder
+			if(this.mScore % 2 === 0)
+            {
+				this.mDriftFactor += 40;
+			}
+		}
+	},
+
+	// Our own function - the game over screen calls it to get the score
+	getScore: function()
+    {
+		return this.mScore;
+	}
+}
+extend(Tutorial2,TGE.Game);

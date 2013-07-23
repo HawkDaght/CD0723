@@ -1,0 +1,44 @@
+
+MainMenu = function(width,height)
+{
+    // Make sure to call the constructor for the superclass
+    MainMenu.superclass.constructor.apply(this,arguments);
+
+    this.backgroundColor = "#fff";
+
+    // Fade in
+    this.setupFade(0.5,"#fff");
+
+    // Logo
+    this.addChild(new TGE.Sprite().setup({
+        x:this.percentageOfWidth(0.5),
+        y:this.percentageOfHeight(0.24),
+        image:"mainmenu_logo"
+    }));
+
+    // Play button
+    this.addChild(new TGE.Button().setup({
+        x:this.percentageOfWidth(0.5),
+        y:this.percentageOfHeight(0.6),
+        image:"mainmenu_play_button",
+        pressFunction:this.playGame.bind(this)
+    }));
+
+    // Tresensa/HTML5 logo
+    /*this.addChild(new TGE.Button().setup( {
+     image:"tresensaLogo",
+     x:this.pixelsFromRight(110),
+     y:this.pixelsFromBottom(75),
+     pressFunction:MainMenu.prototype.tresensaPlug.bind(this)
+     }));*/
+}
+
+MainMenu.prototype =
+{
+    playGame: function()
+    {
+        this.close();
+        TGE.Game.GetInstance().PlayGame();
+    }
+}
+extend(MainMenu,TGE.Window);

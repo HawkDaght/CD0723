@@ -1,0 +1,78 @@
+// This is the constructor for the game
+Tutorial1 = function()
+{
+	// Make sure to call the constructor for the superclass
+	Tutorial1.superclass.constructor.call(this);
+
+	// Game Entities
+	this.mPaddle = null;
+	this.mBall = null;
+	this.mScoreText = null;
+	this.mBestScoreText = null;
+
+	var gameAssets = [
+        {id : 'background',url : 'assets/images/background.jpg'},
+        {id : 'paddle',url : 'assets/images/paddle.png'},
+        {id : 'ball',url : 'assets/images/ball.png'}
+    ];
+
+	// Tell the game about this list of assets - the "required" category is
+	// for assets that need to be fully loaded before the game can start
+	this.assetManager.assignImageAssetList("required", gameAssets);
+}
+
+
+// New methods and overrides for your game class will go in here
+Tutorial1.prototype =
+{
+	// TGE.Game method override - called when the gameplay starts
+	subclassStartPlaying : function()
+    {
+		// Clear everything in the scene
+		this.clearScene();
+
+		// Fill the background in with white
+		this.setBackgroundColor("#fff");
+
+        // Score text
+		this.mScoreText = this.stage.addChild(new TGE.Text().setup({
+            x:this.stage.percentageOfWidth(0.5),
+            y:this.stage.percentageOfHeight(0.095),
+            text:"SCORE: 0",
+            font:"bold 62px Arial",
+            color:"#454"
+        }));
+
+        // Best score text
+        this.mBestScoreText = this.stage.addChild(new TGE.Text().setup({
+            x:this.stage.percentageOfWidth(0.5),
+            y:this.stage.percentageOfHeight(0.91),
+            text:"BEST SCORE: 0",
+            font:"bold 35px Arial",
+            color:"#454"
+        }));
+
+		// Add the background image
+		this.stage.addChild(new TGE.Sprite().setup({
+            x:this.stage.percentageOfWidth(0.5),
+            y:this.stage.percentageOfHeight(0.5),
+            image:"background"
+        }));
+
+        // Paddle sprite
+		this.mPaddle = this.stage.addChild(new TGE.Sprite().setup({
+            x:this.stage.percentageOfWidth(0.5),
+            y:this.stage.percentageOfHeight(0.5),
+            image:"paddle"
+        }));
+
+        // Ball sprite
+		this.mBall = this.stage.addChild(new TGE.Sprite().setup({
+            x:this.stage.percentageOfWidth(0.5),
+            y:this.stage.percentageOfHeight(0.5),
+            image:"ball",
+            scale:0.3
+        }));
+	}
+}
+extend(Tutorial1,TGE.Game);

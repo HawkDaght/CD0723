@@ -1,0 +1,55 @@
+
+GameOver = function(width,height)
+{
+	// Make sure to call the constructor for the superclass
+    GameOver.superclass.constructor.apply(this,arguments);
+
+    // Background
+    this.backgroundColor = "#fff";
+
+    this.setupFade(0.5,"#fff");
+
+    // Score
+    this.addChild(new TGE.Text().setup({
+        x:this.percentageOfWidth(0.5),
+        y:this.percentageOfHeight(0.15),
+        text:"YOU SCORED: " + TGE.Game.GetInstance().getScore().toString(),
+        font:"bold 60px Arial",
+        color:"#8b3f3e"
+    }));
+
+    // Try again
+    this.addChild(new TGE.Button().setup({
+        x:this.percentageOfWidth(0.5),
+        y:this.percentageOfHeight(0.5),
+        image:"gameover_tryagain_button",
+        pressFunction:this.playAgainWithAd.bind(this)
+    }));
+}
+
+GameOver.prototype =
+{
+	playAgainWithAd: function()
+    {
+        // Trigger an advertisement - the closing of the add will trigger the real play again function (playAgain2)
+        var canvas = TGE.Game.GetInstance().mCanvasDiv;
+        TGE.Advertisement.DisplayModalOverlayAd({
+            parentDiv: canvas,
+            adURL: canvas,
+            closeButton: "assets/images/ad_close.png",
+            adWidth: 300,
+            adHeight: 250,
+            overlayOpacity: 1,
+            skipDelay: 0,
+            closeCallback: this.playAgain.bind(this)
+        });
+	},
+
+	playAgain: function()
+    {
+        this.close();
+		TGE.Game.GetInstance().Replay();
+	}
+}
+extend(GameOver,TGE.Window);
+
