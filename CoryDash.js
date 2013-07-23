@@ -74,6 +74,7 @@ CoryDash.prototype =
 	subclassStartPlaying : function()
     {
 
+
 		// Clear everything in the scene
 		this.clearScene();
 		// Game Entities
@@ -221,6 +222,17 @@ CoryDash.prototype =
 		this.dashButton.setSpriteIndex(0);
 		
 		this.audioManager.Play({id:"cory_music", loop:true});
+
+
+		this.level = 1;
+    	this.levelText = this.getLayer("score").addChild(new TGE.Text().setup({
+            x:this.stage.percentageOfWidth(0.2),
+            y:this.stage.percentageOfHeight(0.08),
+            text:this.level,
+            font:"bold 24px Arial",
+            color:"#274"
+        }));
+
 	},
 /*
 	zoomEffect:function(object, originScaleX, originScaleY, xPos){
@@ -249,6 +261,8 @@ CoryDash.prototype =
 	// TGE.Game method override - called every update cycle with elapsed time since last cycle started
 	subclassUpdateGame: function(elapsedTime)
     {	
+
+    	this.levelText.text = this.level;
 		//stop the game if cory died.
 		if(!this.alive){
 			return;
@@ -256,17 +270,7 @@ CoryDash.prototype =
 		
     	this.updateChar();
 
-    	if(this.xDistance + this.stage.percentageOfWidth(1.5) > this.platformStartX){
-    		a = Math.random() * 2;
-			b = Math.floor(Math.random() * 5)/10 + 0.3;
-			c = Math.floor(Math.random() * 6)+1;
-			this.instantiatePlatform(a,b,c);
-			
-			d = c* -1;
-			e = b - 0.8 + Math.floor(Math.random() * 5)/10;
-			f = Math.floor(Math.random() * 6)+1;
-			this.instantiatePlatform(d,e,f);
-    	}
+    	this.levelGenerator();
 		
 		/*if(this.myChar.y > this.stage.percentageOfWidth(0.25) + this.myChar.height/2 * this.myChar.scaleY){
 		this.characterYratio = 1;
@@ -305,6 +309,84 @@ CoryDash.prototype =
 		this.distance = Math.round(this.xDistance/10);
 		this.myScore = Math.floor(this.distance * 0.5 + this.enemykill);
 		this.myScoreText.text = this.myScore.toString();
+	},
+
+	levelGenerator:function(){
+		var levelLength = 50;
+		if(this.xDistance + this.stage.percentageOfWidth(1.5) > this.platformStartX){
+			if(this.xDistance < this.stage.percentageOfWidth(levelLength)){
+				var a = Math.random() * 2;
+				var b = Math.floor(Math.random() * 5)/10 + 0.3;
+				var c = Math.floor(Math.random() * 8)+1;			
+				var d = c* (-1 + 0.3*Math.random());
+				var e = b - 0.8 + Math.floor(Math.random() * 5)/10;
+				var f = Math.floor(Math.random() * 8)+1;
+				this.level = 1;
+			}
+			else if(this.xDistance < this.stage.percentageOfWidth(levelLength * 2)){
+				var a = Math.random() * 3;
+				var b = Math.floor(Math.random() * 5)/10 + 0.3;
+				var c = Math.floor(Math.random() * 6)+1;			
+				var d = c* (-1 + 0.6*Math.random());
+				var e = b - 0.8 + Math.floor(Math.random() * 5)/10;
+				var f = Math.floor(Math.random() * 6)+1;
+				this.level = 2;
+
+			}
+			else if(this.xDistance < this.stage.percentageOfWidth(levelLength * 3)){
+				var a = Math.random() * 4;
+				var b = Math.floor(Math.random() * 5)/10 + 0.3;
+				var c = Math.floor(Math.random() * 6)+1;			
+				var d = c* (-1 + Math.random());
+				var e = b - 0.8 + Math.floor(Math.random() * 5)/10;
+				var f = Math.floor(Math.random() * 4);
+				this.level = 3;
+			}
+			else if(this.xDistance < this.stage.percentageOfWidth(levelLength * 4)){
+				var a = Math.random() * 4.5;
+				var b = Math.floor(Math.random() * 5)/10 + 0.3;
+				var c = Math.floor(Math.random() * 6)+1;			
+				var d = c* (-1 + 2*Math.random());
+				var e = b - 0.8 + Math.floor(Math.random() * 5)/10;
+				var f = Math.floor(Math.random() * 5);
+				this.level = 4;
+			}
+			else{// if(this.xDistance < this.stage.percentageOfWidth(levelLength * 5)){
+				var a = Math.random() * 4.5;
+				var b = Math.floor(Math.random() * 5)/10 + 0.3;
+				var c = Math.floor(Math.random() * 5);			
+				var d = 5*(Math.random() - 0.3);
+				var e = b - 0.8 + Math.floor(Math.random() * 5)/10;
+				var f = Math.floor(Math.random() * 5);
+				this.level = 5;
+			}
+
+
+			/*
+			else if(this.xDistance < this.stage.percentageOfWidth(levelLength * 6)){
+				var a = Math.random() * 2;
+				var b = Math.floor(Math.random() * 5)/10 + 0.3;
+				var c = Math.floor(Math.random() * 6)+1;			
+				var d = c* -1;
+				var e = b - 0.8 + Math.floor(Math.random() * 5)/10;
+				var f = Math.floor(Math.random() * 6)+1;
+			}
+			else if(this.xDistance < this.stage.percentageOfWidth(levelLength * 7)){
+				var a = Math.random() * 2;
+				var b = Math.floor(Math.random() * 5)/10 + 0.3;
+				var c = Math.floor(Math.random() * 6)+1;			
+				var d = c* -1;
+				var e = b - 0.8 + Math.floor(Math.random() * 5)/10;
+				var f = Math.floor(Math.random() * 6)+1;
+			}
+    		*/
+
+			this.instantiatePlatform(a,b,c);
+			this.instantiatePlatform(d,e,f);
+    	}
+
+
+
 	},
 	
 	subclassEndGame: function()
@@ -633,7 +715,7 @@ CoryDash.prototype =
 
 			//trees
 			var p = Math.random();
-			if(p<0.3){
+			if(p<0.4){
 				var tree = new TGE.Sprite().setup({
 					x:newPlatform[i].x,
 					y:newPlatform[i].y,//+	newPlatform[i].height,
@@ -652,9 +734,9 @@ CoryDash.prototype =
 
 			//enemies
 			p = Math.random();
-			if(p<0.2){
+			if(p<0.3){
 				var enemy = new TGE.Sprite().setup({
-					x:newPlatform[i].x + Math.random()*30-15,
+					x:newPlatform[i].x + (Math.random()-0.5)*50,
 					y:newPlatform[i].y,//+	newPlatform[i].height,
 					image:"enemy",
 				})
