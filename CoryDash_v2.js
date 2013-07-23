@@ -598,7 +598,10 @@ CoryDash.prototype =
 					rotation: i,
     			})
     		this.getLayer("absorb").addChild(absorb);
+<<<<<<< HEAD
 			absorb.drag = 0;
+=======
+>>>>>>> Gui
 			absorb.Frame = 1.4;
     		absorb.addEventListener("update",this.updateAbsorb.bind(this));
 		}
@@ -607,7 +610,10 @@ CoryDash.prototype =
 	updateAbsorb:function(event){
 	absorb = event.currentTarget;
 		absorb.Frame +=0.06;
+<<<<<<< HEAD
 		absorb.drag += 0.65;
+=======
+>>>>>>> Gui
 		if (absorb.scaleX <= 0.5){
 			absorb.markForRemoval();
 			this.invincible = 0;
@@ -618,8 +624,14 @@ CoryDash.prototype =
 					this.myEnergy.scaleX = 2;
 				}
 		}else{
+<<<<<<< HEAD
 			absorb.scaleX -= 0.008;			
 			absorb.scaleY -= 0.008;
+=======
+			absorb.scaleDecay = Math.round(Math.random()*15)*0.0005+0.004;
+			absorb.scaleX -= absorb.scaleDecay;	
+			absorb.scaleY -= absorb.scaleDecay;
+>>>>>>> Gui
 			absorb.xSpeed = 15*Math.sin(absorb.rotation*0.4)*Math.sin(absorb.Frame)-this.xSpeed;
 			absorb.ySpeed = 15*Math.cos(absorb.rotation*0.4)*Math.sin(absorb.Frame) + (1-this.characterYratio)*this.ySpeed;
 			
@@ -627,7 +639,14 @@ CoryDash.prototype =
 				absorb.x += absorb.xSpeed;
 				absorb.y += absorb.ySpeed;
 			}else{
+<<<<<<< HEAD
 				absorb.x = (absorb.x-this.myChar.x)*0.9+this.myChar.x;
+=======
+				if(absorb.x>this.myChar.x){
+					absorb.markForRemoval();
+				}
+				absorb.x = (absorb.x-this.myChar.x)*0.9+this.myChar.x + absorb.rotation*0.5;
+>>>>>>> Gui
 				absorb.y = (absorb.y-this.myChar.y)*0.9+this.myChar.y + Math.sin(absorb.Frame*3+absorb.rotation)*2;
 			}
 			
