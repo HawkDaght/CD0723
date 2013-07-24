@@ -95,11 +95,7 @@ CoryDash.prototype =
 	
 	subclassStartPlaying : function()
     {
-<<<<<<< HEAD
 
-
-=======
->>>>>>> Gui
 		// Clear everything in the scene
 		this.clearScene();
 		// Game Entities
@@ -112,14 +108,12 @@ CoryDash.prototype =
 
 		//the distance the character have travelled.
 		this.xDistance = 0;
-<<<<<<< HEAD
+
 
 		this.xSpeed_Normal = 18;
 		this.xSpeed_Rush = 25;
 		this.rushTimer = 0;
 
-=======
->>>>>>> Gui
 		this.xSpeed = 18;
 		this.ySpeed = 0;
 		this.downGravity = 0.8;
@@ -161,10 +155,7 @@ CoryDash.prototype =
 		this.energy = 100;
 		this.energyMax = 100;
 		this.hitByEnemy = false;
-<<<<<<< HEAD
-=======
 
->>>>>>> Gui
 		this.exhausted = false;
 		
 		// Fill the background in with white
@@ -732,6 +723,13 @@ CoryDash.prototype =
 			}else{
 				if(absorb.x>this.myChar.x){
 					absorb.markForRemoval();
+					this.invincible = 0;
+					this.hitenemy = false;
+					if(this.myEnergy.scaleX <= 1.8){
+						this.myEnergy.scaleX += 0.013;
+					}else{
+						this.myEnergy.scaleX = 2;
+					}
 				}
 				absorb.x = (absorb.x-this.myChar.x)*0.9+this.myChar.x + absorb.rotation*0.5;
 				absorb.y = (absorb.y-this.myChar.y)*0.9+this.myChar.y + Math.sin(absorb.Frame*3+absorb.rotation)*2;
