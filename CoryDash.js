@@ -117,6 +117,8 @@ CoryDash.prototype =
 
 		this.xSpeed = 18;
 		this.ySpeed = 0;
+		this.downGravityNormal = 0.8;
+		this.downGravityExhausted = 0.1;
 		this.downGravity = 0.8;
 		this.upGravity = 0.2;
 		this.minUpSpeed = 5;
@@ -147,7 +149,7 @@ CoryDash.prototype =
 		this.enemyExplosionShakingTime = 10;
 		this.invincible = 0;
 		this.hitenemy = false;
-
+		this.revive = 0;
 		this.shakeOffSet = {
 			x: 0,
 			y: 0,
@@ -311,12 +313,13 @@ CoryDash.prototype =
 	subclassUpdateGame: function(elapsedTime)
     {	
     	this.rush();
-
+		if (this.reviveTimer > 0 ){
+		this.updateRevive();
+		}
     	//this.levelText.text = this.level;
 		//stop the game if cory died.
-		if(!this.alive){
-			return;
-		}
+		if(this.alive){
+		
 		
     	this.updateChar();
 
@@ -347,19 +350,23 @@ CoryDash.prototype =
 
 		if(this.exhausted){
 			this.xSpeed -= this.xSpeed * 0.008;
-			this.downGravity = 0.1;
+			this.downGravity = this.downGravityExhausted;
 			this.myEnergy.scaleX = 0;
 		}
 
 
-		if(this.myChar.y > this.stage.percentageOfWidth(1)){
-			this.EndGame();
+		if(this.myChar.y > this.stage.percentageOfHeight(1) + this.myChar.height * this.myChar.scaleY/2){
+			this.alive = false;
+			this.contPlay();
 		}
 
 	    this.setShakeOffSet();
 		this.distance = Math.round(this.xDistance/10);
 		this.myScore = Math.floor(this.distance * 0.5 + this.enemykill);
 		this.myScoreText.text = this.myScore.toString();
+		}else if(!this.alive && this.revive <=0){
+			this.xSpeed -= this.xSpeed * 0.02;
+		}
 	},
 
 	levelUp:function(currentlevel){
@@ -435,7 +442,6 @@ CoryDash.prototype =
 	
 	subclassEndGame: function()
     {
-		this.alive = false;
 		this.audioManager.StopAll();
 	},
 	
@@ -680,9 +686,6 @@ CoryDash.prototype =
 		trail.y += trail.ySpeed;
 	},
 
-
-	
-	
 	instantiateAbsorb:function(n){
 		var i;
 		for(i=0; i<n; i++){
@@ -696,6 +699,7 @@ CoryDash.prototype =
     			})
     		this.getLayer("absorb").addChild(absorb);
 			absorb.Frame = 1.4;
+			drag = 1;
     		absorb.addEventListener("update",this.updateAbsorb.bind(this));
 		}
 	},
@@ -703,40 +707,32 @@ CoryDash.prototype =
 	updateAbsorb:function(event){
 	absorb = event.currentTarget;
 		absorb.Frame +=0.06;
-		if (absorb.scaleX <= 0.5){
-			absorb.markForRemoval();
-			this.invincible = 0;
-			this.hitenemy = false;
-			if(this.myEnergy.scaleX <= 1.8){
+		
+		if(absorb.scaleX > 0.7){
+			absorb.scaleDecay = Math.round(Math.random()*15)*0.0006+0.004;
+			absorb.scaleX -= absorb.scaleDecay;
+			absorb.scaleY -= absorb.scaleDecay;
+			absorb.xSpeed = 15*Math.sin(absorb.rotation*0.4)*Math.sin(absorb.Frame) - this.xSpeed;
+			absorb.ySpeed = 15*Math.cos(absorb.rotation*0.4)*Math.sin(absorb.Frame) + (1-this.characterYratio)*this.ySpeed;
+			absorb.x += absorb.xSpeed;
+			absorb.y += absorb.ySpeed;
+		}else{
+			if(absorb.x>this.myChar.x || absorb.scaleX<0.3){
+				absorb.markForRemoval();
+				this.invincible = 0;
+				this.hitenemy = false;
+				if(this.myEnergy.scaleX <= 1.8){
 					this.myEnergy.scaleX += 0.013;
 				}else{
 					this.myEnergy.scaleX = 2;
 				}
-		}else{
-			absorb.scaleDecay = Math.round(Math.random()*15)*0.0005+0.004;
-			absorb.scaleX -= absorb.scaleDecay;	
-			absorb.scaleY -= absorb.scaleDecay;
-			absorb.xSpeed = 15*Math.sin(absorb.rotation*0.4)*Math.sin(absorb.Frame)-this.xSpeed;
-			absorb.ySpeed = 15*Math.cos(absorb.rotation*0.4)*Math.sin(absorb.Frame) + (1-this.characterYratio)*this.ySpeed;
-			
-			if(absorb.scaleX > 0.8){
-				absorb.x += absorb.xSpeed;
-				absorb.y += absorb.ySpeed;
-			}else{
-				if(absorb.x>this.myChar.x){
-					absorb.markForRemoval();
-					this.invincible = 0;
-					this.hitenemy = false;
-					if(this.myEnergy.scaleX <= 1.8){
-						this.myEnergy.scaleX += 0.013;
-					}else{
-						this.myEnergy.scaleX = 2;
-					}
-				}
-				absorb.x = (absorb.x-this.myChar.x)*0.9+this.myChar.x + absorb.rotation*0.5;
-				absorb.y = (absorb.y-this.myChar.y)*0.9+this.myChar.y + Math.sin(absorb.Frame*3+absorb.rotation)*2;
 			}
-			
+				absorb.scaleDecay = 0.002;
+				absorb.scaleX -= absorb.scaleDecay;
+				absorb.scaleY -= absorb.scaleDecay;
+				absorb.rotation *= 1.1;
+				absorb.x = (absorb.x-this.myChar.x)*(0.8 - absorb.rotation * 0.05)+this.myChar.x;
+				absorb.y = (absorb.y-this.myChar.y)*(0.8 - absorb.rotation * 0.05)+this.myChar.y;
 		}
 		if(absorb.Frame >= 4.7){
 			absorb.Frame = 1.4;
@@ -940,7 +936,93 @@ CoryDash.prototype =
 		this.backgroundObjectMoving(explosion,explosion.xPos);
 		
 	},
-
+	
+	contPlay:function()
+	{
+		
+		this.fail = this.getLayer("button").addChild(new TGE.Text().setup({
+        x:this.stage.percentageOfWidth(0.5),
+        y:this.stage.percentageOfHeight(0.4),
+        text:"You fall! Continue playing using your hearts?",
+        font:"bold 36px Arial",
+        color:"#fff"
+		}));
+		
+		this.cont = this.getLayer("button").addChild(new TGE.Button().setup({
+        x:this.stage.percentageOfWidth(0.4),
+        y:this.stage.percentageOfHeight(0.55),
+		mouseEnabled: true,
+		width: 150,
+        text:"Yes",
+        font:"bold 36px Arial",
+        color:"#fff",
+		pressFunction: this.reviveCory.bind(this)
+		}));
+		
+		this.over = this.getLayer("button").addChild(new TGE.Button().setup({
+        x:this.stage.percentageOfWidth(0.6),
+        y:this.stage.percentageOfHeight(0.55),
+		mouseEnabled:true,
+		width: 150,
+        text:"No",
+        font:"bold 36px Arial",
+        color:"#fff",
+		pressFunction: this.EndGame.bind(this)
+		}));
+	},
+	
+	reviveCory: function(){
+		this.reviveTimer = 100;		
+		this.myChar.ySpeed =0;
+		this.myChar.rotation =0;
+		this.fail.markForRemoval();
+		this.cont.markForRemoval();
+		this.over.markForRemoval();
+		this.myEnergy.scaleX = 2;
+		this.myChar.y = this.stage.percentageOfHeight(1.05);
+		this.exhausted = false;
+		this.downGravity = this.downGravityNormal;
+	},
+	
+	updateRevive: function(elapsedTime){
+		if(this.reviveTimer >10){
+		this.risingSpeed = 10;
+		
+		this.myChar.y -= this.stage.percentageOfHeight(0.008);
+		var p = this.getLayer("platform").numChildren();
+			for (i = 0; i < p; i ++){
+				var platform = this.getLayer("platform").getChildAt(i);
+				platform.y += this.risingSpeed;
+			}
+			
+		var t = this.getLayer("tree").numChildren();
+			for (i = 0; i < t; i ++){
+				var tree = this.getLayer("tree").getChildAt(i);
+				tree.y += this.risingSpeed;
+			}
+		var e = this.getLayer("enemy").numChildren();
+			for (i = 0; i < e; i ++){
+				var enemy = this.getLayer("enemy").getChildAt(i);
+				enemy.y += this.risingSpeed;
+			}
+		if (this.xSpeed < this.xSpeed_Normal){
+			this.xSpeed += this.xSpeed_Normal * 0.05;
+		}else{
+			this.xSpeed = this.xSpeed_Normal
+		}
+		if(this.reviveTimer>=10){
+		this.reviveTimer -= 1;
+		}
+		}
+		if(this.reviveTimer <= 10){
+			this.alive = true;
+			this.beginning =10;
+			this.reviveTimer -= 0.1;
+		}else if (this.reviveTimer<=0){
+			this.reviveTimer = 0;
+		}
+		
+	},
 	backgroundObjectMoving:function(object,xPos){
 		object.y -= (1-this.characterYratio)*this.ySpeed;
 		object.x = xPos - this.xDistance;
