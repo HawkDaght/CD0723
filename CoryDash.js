@@ -5,21 +5,15 @@ CoryDash = function()
 	CoryDash.superclass.constructor.call(this);
 	
 	var gameAssets = [
-<<<<<<< HEAD
-<<<<<<< HEAD
+
 		{id: 'cory_startScreen', url: 'assets/images/screens/mainmenu/start_screen.png'},
 		{id: 'cory_endScreen', url: 'assets/images/screens/gameover/cory_falling.png'},
 		{id: 'cory_endScreen_exhausted', url: 'assets/images/screens/gameover/cory_tired.png'},
-=======
-		{id: 'cory_startScreen', url: 'assets/images/screens/mainmenu/cory_startscreen.png'},
-		{id: 'cory_falling', url: 'assets/images/screens/gameover/cory_falling.png'},
-		{id: 'cory_endScreen_exhausted', url: 'assets/images/screens/gameover/cory_endScreen_exhausted.png'},
->>>>>>> Gui
-=======
+
 		{id: 'cory_startScreen', url: 'assets/images/screens/mainmenu/start_screen.png'},
 		{id: 'cory_endScreen', url: 'assets/images/screens/gameover/cory_falling.png'},
 		{id: 'cory_endScreen_exhausted', url: 'assets/images/screens/gameover/cory_tired.png'},
->>>>>>> Atlas
+
         {id : 'char',url : 'assets/images/cory_spriteSheet.png'},
         {id : 'platform',url : 'assets/images/ground_sprites.png'},
         {id : 'tree',url : 'assets/images/tree.png'},
@@ -767,32 +761,6 @@ CoryDash.prototype =
 				}else{
 					this.myEnergy.scaleX = 2;
 				}
-<<<<<<< HEAD
-		}else{
-			absorb.scaleDecay = Math.round(Math.random()*15)*0.0005+0.004;
-			absorb.scaleX -= absorb.scaleDecay;	
-			absorb.scaleY -= absorb.scaleDecay;
-			absorb.xSpeed = 15*Math.sin(absorb.rotation*0.4)*Math.sin(absorb.Frame)-this.xSpeed;
-			absorb.ySpeed = 15*Math.cos(absorb.rotation*0.4)*Math.sin(absorb.Frame) + (1-this.characterYratio)*this.ySpeed;
-			
-			if(absorb.scaleX > 0.8){
-				absorb.x += absorb.xSpeed;
-				absorb.y += absorb.ySpeed;
-			}else{
-				if(absorb.x>this.myChar.x){
-					absorb.markForRemoval();
-					this.invincible = 0;
-					this.hitenemy = false;
-					if(this.myEnergy.scaleX <= 1.8){
-						this.myEnergy.scaleX += 0.013;
-					}else{
-						this.myEnergy.scaleX = 2;
-					}
-				}
-				absorb.x = (absorb.x-this.myChar.x)*0.9+this.myChar.x + absorb.rotation*0.5;
-				absorb.y = (absorb.y-this.myChar.y)*0.9+this.myChar.y + Math.sin(absorb.Frame*3+absorb.rotation)*2;
-=======
->>>>>>> Gui
 			}
 				absorb.scaleDecay = 0.002;
 				absorb.scaleX -= absorb.scaleDecay;
