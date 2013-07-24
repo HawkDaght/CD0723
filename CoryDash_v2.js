@@ -5,21 +5,9 @@ CoryDash = function()
 	CoryDash.superclass.constructor.call(this);
 	
 	var gameAssets = [
-<<<<<<< HEAD
-<<<<<<< HEAD
-		{id: 'cory_startScreen', url: 'assets/images/screens/mainmenu/start_screen.png'},
-		{id: 'cory_endScreen', url: 'assets/images/screens/gameover/cory_falling.png'},
-		{id: 'cory_endScreen_exhausted', url: 'assets/images/screens/gameover/cory_tired.png'},
-=======
 		{id: 'cory_startScreen', url: 'assets/images/screens/mainmenu/cory_startscreen.png'},
 		{id: 'cory_falling', url: 'assets/images/screens/gameover/cory_falling.png'},
 		{id: 'cory_endScreen_exhausted', url: 'assets/images/screens/gameover/cory_endScreen_exhausted.png'},
->>>>>>> Gui
-=======
-		{id: 'cory_startScreen', url: 'assets/images/screens/mainmenu/start_screen.png'},
-		{id: 'cory_endScreen', url: 'assets/images/screens/gameover/cory_falling.png'},
-		{id: 'cory_endScreen_exhausted', url: 'assets/images/screens/gameover/cory_tired.png'},
->>>>>>> Atlas
         {id : 'char',url : 'assets/images/cory_spriteSheet.png'},
         {id : 'platform',url : 'assets/images/ground_sprites.png'},
         {id : 'tree',url : 'assets/images/tree.png'},
@@ -110,7 +98,6 @@ CoryDash.prototype =
 	
 	subclassStartPlaying : function()
     {
-
 		// Clear everything in the scene
 		this.clearScene();
 		// Game Entities
@@ -123,12 +110,6 @@ CoryDash.prototype =
 
 		//the distance the character have travelled.
 		this.xDistance = 0;
-
-
-		this.xSpeed_Normal = 18;
-		this.xSpeed_Rush = 25;
-		this.rushTimer = 0;
-
 		this.xSpeed = 18;
 		this.ySpeed = 0;
 		this.downGravity = 0.8;
@@ -169,6 +150,7 @@ CoryDash.prototype =
 		
 		this.energy = 100;
 		this.energyMax = 100;
+
 		this.hitByEnemy = false;
 
 		this.exhausted = false;
@@ -277,20 +259,6 @@ CoryDash.prototype =
 		this.dashButton.setSpriteIndex(0);
 		
 		this.audioManager.Play({id:"cory_music", loop:true});
-
-
-		this.level = 1;
-
-		/*
-    	this.levelText = this.getLayer("score").addChild(new TGE.Text().setup({
-            x:this.stage.percentageOfWidth(0.2),
-            y:this.stage.percentageOfHeight(0.08),
-            text:this.level,
-            font:"bold 24px Arial",
-            color:"#274"
-        }));
-		*/
-
 	},
 /*
 	zoomEffect:function(object, originScaleX, originScaleY, xPos){
@@ -316,25 +284,9 @@ CoryDash.prototype =
 		}	
 	},
 
-	rush:function(){
-		if(this.rushTimer > 0){
-			this.rushTimer --;
-			this.xSpeed = this.xSpeed_Rush;
-			this.jump = 0;
-		}
-		else{
-			if(this.xSpeed > this.xSpeed_Normal){
-				this.xSpeed -= (this.xSpeed - this.xSpeed_Normal)*0.05;
-			}
-		}
-	},
-
 	// TGE.Game method override - called every update cycle with elapsed time since last cycle started
 	subclassUpdateGame: function(elapsedTime)
     {	
-    	this.rush();
-
-    	//this.levelText.text = this.level;
 		//stop the game if cory died.
 		if (this.reviveTimer > 0 ){
 		this.updateRevive();
@@ -344,7 +296,17 @@ CoryDash.prototype =
 		
     	this.updateChar();
 
-    	this.levelGenerator();
+    	if(this.xDistance + this.stage.percentageOfWidth(1.5) > this.platformStartX){
+    		a = Math.random() * 2;
+			b = Math.floor(Math.random() * 5)/10 + 0.3;
+			c = Math.floor(Math.random() * 6)+1;
+			this.instantiatePlatform(a,b,c);
+			
+			d = c* -1;
+			e = b - 0.8 + Math.floor(Math.random() * 5)/10;
+			f = Math.floor(Math.random() * 6)+1;
+			this.instantiatePlatform(d,e,f);
+    	}
 		
 		if (this.beginning <=0){
 			if(this.hitenemy && this.myEnergy.scaleX <= 0.1){
@@ -394,77 +356,6 @@ CoryDash.prototype =
 		this.myScoreText.text = this.myScore.toString();
 		}
 	},
-
-	levelUp:function(currentlevel){
-		var levelLength = 50;
-		if(this.level == i && this.xDistance > this.stage.percentageOfWidth(levelLength) * i && this.xDistance < this.stage.percentageOfWidth(levelLength) * (i+1)){
-			this.level ++;
-			this.shakeTimer = 300;
-			this.rushTimer = 250;
-		}
-	},
-
-	levelGenerator:function(){
-		this.levelUp(1);
-		this.levelUp(2);
-		this.levelUp(3);
-		this.levelUp(4);
-
-		if(this.xDistance + this.stage.percentageOfWidth(1.5) > this.platformStartX){
-			if(this.level == 1){
-				var a = Math.random() * 2;
-				var b = Math.floor(Math.random() * 5)/10 + 0.3;
-				var c = Math.floor(Math.random() * 8)+3;			
-				var d = c* (-1 + 0.3*Math.random());
-				var e = b - 0.8 + Math.floor(Math.random() * 5)/10;
-				var f = Math.floor(Math.random() * 8)+3;
-				this.level = 1;
-			}
-			else if(this.level == 2){
-				var a = Math.random() * 3;
-				var b = Math.floor(Math.random() * 5)/10 + 0.3;
-				var c = Math.floor(Math.random() * 8)+2;			
-				var d = c* (-1 + 0.6*Math.random());
-				var e = b - 0.8 + Math.floor(Math.random() * 5)/10;
-				var f = Math.floor(Math.random() * 8)+2;
-				this.level = 2;
-
-			}
-			else if(this.level == 3){
-				var a = Math.random() * 4;
-				var b = Math.floor(Math.random() * 5)/10 + 0.3;
-				var c = Math.floor(Math.random() * 7)+2;			
-				var d = c* (-1 + Math.random());
-				var e = b - 0.8 + Math.floor(Math.random() * 5)/10;
-				var f = Math.floor(Math.random() * 7)+2;
-				this.level = 3;
-			}
-			else if(this.level == 4){
-				var a = Math.random() * 4.5;
-				var b = Math.floor(Math.random() * 5)/10 + 0.3;
-				var c = Math.floor(Math.random() * 6)+1;			
-				var d = c* (-1 + 2*Math.random());
-				var e = b - 0.8 + Math.floor(Math.random() * 5)/10;
-				var f = Math.floor(Math.random() * 6)+1;
-				this.level = 4;
-			}
-			else{
-				var a = Math.random() * 4.5;
-				var b = Math.floor(Math.random() * 5)/10 + 0.3;
-				var c = Math.floor(Math.random() * 5)+1;			
-				var d = 5*(Math.random() - 0.3);
-				var e = b - 0.8 + Math.floor(Math.random() * 5)/10;
-				var f = Math.floor(Math.random() * 5);
-				this.level = 5;
-			}
-
-			this.instantiatePlatform(a,b,c);
-			this.instantiatePlatform(d,e,f);
-    	}
-
-
-
-	},
 	
 	
 	
@@ -475,6 +366,7 @@ CoryDash.prototype =
 	},
 	
 	updateChar:function(elapsedTime){
+		
 	//set sprite index
 		var s =3;		
 		
@@ -767,32 +659,6 @@ CoryDash.prototype =
 				}else{
 					this.myEnergy.scaleX = 2;
 				}
-<<<<<<< HEAD
-		}else{
-			absorb.scaleDecay = Math.round(Math.random()*15)*0.0005+0.004;
-			absorb.scaleX -= absorb.scaleDecay;	
-			absorb.scaleY -= absorb.scaleDecay;
-			absorb.xSpeed = 15*Math.sin(absorb.rotation*0.4)*Math.sin(absorb.Frame)-this.xSpeed;
-			absorb.ySpeed = 15*Math.cos(absorb.rotation*0.4)*Math.sin(absorb.Frame) + (1-this.characterYratio)*this.ySpeed;
-			
-			if(absorb.scaleX > 0.8){
-				absorb.x += absorb.xSpeed;
-				absorb.y += absorb.ySpeed;
-			}else{
-				if(absorb.x>this.myChar.x){
-					absorb.markForRemoval();
-					this.invincible = 0;
-					this.hitenemy = false;
-					if(this.myEnergy.scaleX <= 1.8){
-						this.myEnergy.scaleX += 0.013;
-					}else{
-						this.myEnergy.scaleX = 2;
-					}
-				}
-				absorb.x = (absorb.x-this.myChar.x)*0.9+this.myChar.x + absorb.rotation*0.5;
-				absorb.y = (absorb.y-this.myChar.y)*0.9+this.myChar.y + Math.sin(absorb.Frame*3+absorb.rotation)*2;
-=======
->>>>>>> Gui
 			}
 				absorb.scaleDecay = 0.002;
 				absorb.scaleX -= absorb.scaleDecay;
@@ -843,7 +709,7 @@ CoryDash.prototype =
 
 			//trees
 			var p = Math.random();
-			if(p<0.4){
+			if(p<0.3){
 				var tree = new TGE.Sprite().setup({
 					x:newPlatform[i].x,
 					y:newPlatform[i].y,//+	newPlatform[i].height,
@@ -862,9 +728,9 @@ CoryDash.prototype =
 
 			//enemies
 			p = Math.random();
-			if(p<0.3){
+			if(p<0.2){
 				var enemy = new TGE.Sprite().setup({
-					x:newPlatform[i].x + (Math.random()-0.5)*50,
+					x:newPlatform[i].x + Math.random()*30-15,
 					y:newPlatform[i].y,//+	newPlatform[i].height,
 					image:"enemy",
 				})
@@ -941,9 +807,7 @@ CoryDash.prototype =
 				explosion.xPos = enemy.xPos;
 				this.getLayer("effect").addChild(explosion);
 				explosion.addEventListener("update",this.updateExplosion.bind(this));
-				if(this.shakeTimer < this.enemyExplosionShakingTime){
-					this.shakeTimer = this.enemyExplosionShakingTime;
-				}
+				this.shakeTimer = this.enemyExplosionShakingTime;
 								
 				enemy.markForRemoval();
 				
@@ -988,6 +852,7 @@ CoryDash.prototype =
 		kill.markForRemoval();
 		this.enemykill += 100;
 		}
+
 	},
 	
 	updateExplosion:function(event){
