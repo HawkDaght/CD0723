@@ -5,9 +5,9 @@ CoryDash = function()
 	CoryDash.superclass.constructor.call(this);
 	
 	var gameAssets = [
-		{id: 'cory_startScreen', url: 'assets/images/screens/mainmenu/cory_startscreen.png'},
-		{id: 'cory_endScreen', url: 'assets/images/screens/gameover/cory_endscreen.png'},
-		{id: 'cory_endScreen_exhausted', url: 'assets/images/screens/gameover/cory_endScreen_exhausted.png'},
+		{id: 'cory_startScreen', url: 'assets/images/screens/mainmenu/start_screen.png'},
+		{id: 'cory_endScreen', url: 'assets/images/screens/gameover/cory_falling.png'},
+		{id: 'cory_endScreen_exhausted', url: 'assets/images/screens/gameover/cory_tired.png'},
         {id : 'char',url : 'assets/images/cory_spriteSheet.png'},
         {id : 'platform',url : 'assets/images/ground_sprites.png'},
         {id : 'tree',url : 'assets/images/tree.png'},
@@ -19,6 +19,7 @@ CoryDash = function()
         {id : 'energy_bar',url : 'assets/images/energyBar.png'},
         {id : 'energy_tile',url : 'assets/images/energyTile.png'},
 		{id : 'energy_dmg',url : 'assets/images/energyDmg.png'},
+		{id : 'danger_glow',url : 'assets/images/danger_glow.png'},
         {id : 'background_1',url : 'assets/images/background_trees.png'},
         {id : 'background_2',url : 'assets/images/background_hills.png'},
         {id : 'background_3',url : 'assets/images/background_mountains.png'},
@@ -297,6 +298,7 @@ CoryDash.prototype =
 		if(this.rushTimer > 0){
 			this.rushTimer --;
 			this.xSpeed = this.xSpeed_Rush;
+			this.jump = 0;
 		}
 		else{
 			if(this.xSpeed > this.xSpeed_Normal){
@@ -379,29 +381,29 @@ CoryDash.prototype =
 			if(this.level == 1){
 				var a = Math.random() * 2;
 				var b = Math.floor(Math.random() * 5)/10 + 0.3;
-				var c = Math.floor(Math.random() * 8)+1;			
+				var c = Math.floor(Math.random() * 8)+3;			
 				var d = c* (-1 + 0.3*Math.random());
 				var e = b - 0.8 + Math.floor(Math.random() * 5)/10;
-				var f = Math.floor(Math.random() * 8)+1;
+				var f = Math.floor(Math.random() * 8)+3;
 				this.level = 1;
 			}
 			else if(this.level == 2){
 				var a = Math.random() * 3;
 				var b = Math.floor(Math.random() * 5)/10 + 0.3;
-				var c = Math.floor(Math.random() * 6)+1;			
+				var c = Math.floor(Math.random() * 8)+2;			
 				var d = c* (-1 + 0.6*Math.random());
 				var e = b - 0.8 + Math.floor(Math.random() * 5)/10;
-				var f = Math.floor(Math.random() * 6)+1;
+				var f = Math.floor(Math.random() * 8)+2;
 				this.level = 2;
 
 			}
 			else if(this.level == 3){
 				var a = Math.random() * 4;
 				var b = Math.floor(Math.random() * 5)/10 + 0.3;
-				var c = Math.floor(Math.random() * 6)+1;			
+				var c = Math.floor(Math.random() * 7)+2;			
 				var d = c* (-1 + Math.random());
 				var e = b - 0.8 + Math.floor(Math.random() * 5)/10;
-				var f = Math.floor(Math.random() * 4);
+				var f = Math.floor(Math.random() * 7)+2;
 				this.level = 3;
 			}
 			else if(this.level == 4){
@@ -410,13 +412,13 @@ CoryDash.prototype =
 				var c = Math.floor(Math.random() * 6)+1;			
 				var d = c* (-1 + 2*Math.random());
 				var e = b - 0.8 + Math.floor(Math.random() * 5)/10;
-				var f = Math.floor(Math.random() * 5);
+				var f = Math.floor(Math.random() * 6)+1;
 				this.level = 4;
 			}
 			else{
 				var a = Math.random() * 4.5;
 				var b = Math.floor(Math.random() * 5)/10 + 0.3;
-				var c = Math.floor(Math.random() * 5);			
+				var c = Math.floor(Math.random() * 5)+1;			
 				var d = 5*(Math.random() - 0.3);
 				var e = b - 0.8 + Math.floor(Math.random() * 5)/10;
 				var f = Math.floor(Math.random() * 5);
