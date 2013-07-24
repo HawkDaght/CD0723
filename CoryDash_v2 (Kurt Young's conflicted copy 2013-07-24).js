@@ -6,7 +6,7 @@ CoryDash = function()
 	
 	var gameAssets = [
 		{id: 'cory_startScreen', url: 'assets/images/screens/mainmenu/cory_startscreen.png'},
-		{id: 'cory_endScreen', url: 'assets/images/screens/gameover/cory_endscreen.png'},
+		{id: 'cory_falling', url: 'assets/images/screens/gameover/cory_falling.png'},
 		{id: 'cory_endScreen_exhausted', url: 'assets/images/screens/gameover/cory_endScreen_exhausted.png'},
         {id : 'char',url : 'assets/images/cory_spriteSheet.png'},
         {id : 'platform',url : 'assets/images/ground_sprites.png'},
@@ -19,13 +19,16 @@ CoryDash = function()
         {id : 'energy_bar',url : 'assets/images/energyBar.png'},
         {id : 'energy_tile',url : 'assets/images/energyTile.png'},
 		{id : 'energy_dmg',url : 'assets/images/energyDmg.png'},
+		{id : 'danger_glow',url : 'assets/images/danger_glow.png'},
         {id : 'background_1',url : 'assets/images/background_trees.png'},
         {id : 'background_2',url : 'assets/images/background_hills.png'},
         {id : 'background_3',url : 'assets/images/background_mountains.png'},
 		{id : 'tutorial_01',url : 'assets/images/tutorial01.png'},
 		{id : 'tutorial_02',url : 'assets/images/tutorial02.png'},
+	
 		{id : 'cory_music',url: 'assets/audio/Game_Demo_Electronic.mp3', assetType:"audio"},
 		{id : 'explosion_audio',url: 'assets/audio/explosion.wav', assetType:"audio"},
+		{id : 'dash_audio',url: 'assets/audio/dash.wav', assetType:"audio"},
     ];
 
 
@@ -184,6 +187,14 @@ CoryDash.prototype =
 		this.instantiatePlatform(d,e,f);
 		this.beginning = 10;
 	
+		this.dangerGlow = this.getLayer("energy").addChild(new TGE.Sprite().setup({
+			x:this.stage.percentageOfWidth(0.5),
+            y:this.stage.percentageOfHeight(0.098),
+			alpha:0,
+			scaleX: 0.4,
+			scaleY: 0.4,
+			image:"danger_glow"
+		}));
 		
 		this.myEnergy = this.getLayer("energy").addChild(new TGE.Sprite().setup({
 			x:this.stage.percentageOfWidth(0.42),
@@ -302,6 +313,12 @@ CoryDash.prototype =
 				this.myEnergy.scaleX -= 0.003;
 			}
 		this.myEnergyDmg.x = this.myEnergy.x + this.myEnergy.width * this.myEnergy.scaleX/2;
+		}
+		
+		if(this.myEnergy.scaleX < 0.5){
+			this.dangerGlow.alpha = Math.sin(this.xDistance/80)*0.8+0.2;
+		}else{
+			this.dangerGlow.alpha = 0;
 		}
 		
 		if(this.invincible > 0 ){
@@ -446,6 +463,7 @@ CoryDash.prototype =
     		this.dashtimer = 0;
     		this.isDashing = true;
     		this.myChar.x = this.charXPos + this.dashFowardDistance;
+			this.audioManager.Play({id:"dash_audio", loop:false});
     		this.pressedJump =false;
     		if(this.jump >1){
     			this.jump =1;
@@ -598,11 +616,8 @@ CoryDash.prototype =
 					rotation: i,
     			})
     		this.getLayer("absorb").addChild(absorb);
-<<<<<<< HEAD
-			absorb.drag = 0;
-=======
->>>>>>> Gui
 			absorb.Frame = 1.4;
+			drag = 1;
     		absorb.addEventListener("update",this.updateAbsorb.bind(this));
 		}
 	},
@@ -610,46 +625,32 @@ CoryDash.prototype =
 	updateAbsorb:function(event){
 	absorb = event.currentTarget;
 		absorb.Frame +=0.06;
-<<<<<<< HEAD
-		absorb.drag += 0.65;
-=======
->>>>>>> Gui
-		if (absorb.scaleX <= 0.5){
-			absorb.markForRemoval();
-			this.invincible = 0;
-			this.hitenemy = false;
-			if(this.myEnergy.scaleX <= 1.8){
+		
+		if(absorb.scaleX > 0.7){
+			absorb.scaleDecay = Math.round(Math.random()*15)*0.0006+0.004;
+			absorb.scaleX -= absorb.scaleDecay;
+			absorb.scaleY -= absorb.scaleDecay;
+			absorb.xSpeed = 15*Math.sin(absorb.rotation*0.4)*Math.sin(absorb.Frame) - this.xSpeed;
+			absorb.ySpeed = 15*Math.cos(absorb.rotation*0.4)*Math.sin(absorb.Frame) + (1-this.characterYratio)*this.ySpeed;
+			absorb.x += absorb.xSpeed;
+			absorb.y += absorb.ySpeed;
+		}else{
+			if(absorb.x>this.myChar.x){
+				absorb.markForRemoval();
+				this.invincible = 0;
+				this.hitenemy = false;
+				if(this.myEnergy.scaleX <= 1.8){
 					this.myEnergy.scaleX += 0.013;
 				}else{
 					this.myEnergy.scaleX = 2;
 				}
-		}else{
-<<<<<<< HEAD
-			absorb.scaleX -= 0.008;			
-			absorb.scaleY -= 0.008;
-=======
-			absorb.scaleDecay = Math.round(Math.random()*15)*0.0005+0.004;
-			absorb.scaleX -= absorb.scaleDecay;	
-			absorb.scaleY -= absorb.scaleDecay;
->>>>>>> Gui
-			absorb.xSpeed = 15*Math.sin(absorb.rotation*0.4)*Math.sin(absorb.Frame)-this.xSpeed;
-			absorb.ySpeed = 15*Math.cos(absorb.rotation*0.4)*Math.sin(absorb.Frame) + (1-this.characterYratio)*this.ySpeed;
-			
-			if(absorb.scaleX > 0.8){
-				absorb.x += absorb.xSpeed;
-				absorb.y += absorb.ySpeed;
-			}else{
-<<<<<<< HEAD
-				absorb.x = (absorb.x-this.myChar.x)*0.9+this.myChar.x;
-=======
-				if(absorb.x>this.myChar.x){
-					absorb.markForRemoval();
-				}
-				absorb.x = (absorb.x-this.myChar.x)*0.9+this.myChar.x + absorb.rotation*0.5;
->>>>>>> Gui
-				absorb.y = (absorb.y-this.myChar.y)*0.9+this.myChar.y + Math.sin(absorb.Frame*3+absorb.rotation)*2;
 			}
-			
+				absorb.scaleDecay = 0.002;
+				absorb.scaleX -= absorb.scaleDecay;
+				absorb.scaleY -= absorb.scaleDecay;
+				absorb.rotation *= 1.1;
+				absorb.x = (absorb.x-this.myChar.x)*(0.8 - absorb.rotation * 0.05)+this.myChar.x;
+				absorb.y = (absorb.y-this.myChar.y)*(0.8 - absorb.rotation * 0.05)+this.myChar.y;
 		}
 		if(absorb.Frame >= 4.7){
 			absorb.Frame = 1.4;
