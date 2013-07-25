@@ -117,12 +117,12 @@ CoryDash.prototype =
 
 		this.xSpeed = 18;
 		this.ySpeed = 0;
-		this.downGravityNormal = 0.8;
+		this.downGravityNormal = 1.4;
 		this.downGravityExhausted = 0.1;
 		this.downGravity = 0.8;
-		this.upGravity = 0.2;
+		this.upGravity = 0.4;
 		this.minUpSpeed = 5;
-		this.upSpeed = 10;
+		this.upSpeed = 15;
 		this.jump = 0;
 		this.pressedJump = false;
 		this.highestBoundary = 0.2;
@@ -155,8 +155,6 @@ CoryDash.prototype =
 			y: 0,
 		}
 		
-		this.energy = 100;
-		this.energyMax = 100;
 		this.hitByEnemy = false;
 
 		this.exhausted = false;
@@ -271,6 +269,24 @@ CoryDash.prototype =
         }));
 		*/
 
+		this.dangerGlow = this.getLayer("energy").addChild(new TGE.Sprite().setup({
+			x:this.stage.percentageOfWidth(0.5),
+            y:this.stage.percentageOfHeight(0.098),
+			alpha:0,
+			scaleX: 0.4,
+			scaleY: 0.4,
+			image:"danger_glow",
+		}));
+
+		this.dangerText = this.getLayer("energy").addChild(new TGE.Text().setup({
+			x:this.stage.percentageOfWidth(0.5),
+			y:this.stage.percentageOfHeight(0.22),
+			text:"Destroy Robots for Energy!",
+			font:"bold 36px Arial",
+			color:"#ff0000",
+			alpha:0,
+		}));
+
 	},
 /*
 	zoomEffect:function(object, originScaleX, originScaleY, xPos){
@@ -329,7 +345,7 @@ CoryDash.prototype =
 			if(this.hitenemy && this.myEnergy.scaleX <= 0.1){
 				this.myEnergy.scaleX -= 0;
 			}else{
-				this.myEnergy.scaleX -= 0.003;
+				this.myEnergy.scaleX -= (0.002 + this.myEnergy.scaleX * 0.001);
 			}
 		this.myEnergyDmg.x = this.myEnergy.x + this.myEnergy.width * this.myEnergy.scaleX/2;
 		}
@@ -367,6 +383,19 @@ CoryDash.prototype =
 		}else if(!this.alive && this.revive <=0){
 			this.xSpeed -= this.xSpeed * 0.02;
 		}
+
+
+		this.updateGlow();
+
+	},
+
+	updateGlow:function() {
+		if(this.myEnergy.scaleX < 0.5){
+			this.dangerGlow.alpha = Math.sin(this.xDistance/200)* 0.5 + 0.5;
+		}else{
+			this.dangerGlow.alpha = 0;
+		}
+		this.dangerText.alpha = this.dangerGlow.alpha;
 	},
 
 	levelUp:function(currentlevel){
@@ -582,6 +611,10 @@ CoryDash.prototype =
 		}else{
 			this.myChar.setSpriteIndex(s);
 		}
+
+		if(this.isDashing){
+			this.ySpeed = 0;
+		}
 		
 		if(this.beginning <= 0){
     		this.dashtimer += 1;
@@ -722,7 +755,7 @@ CoryDash.prototype =
 				this.invincible = 0;
 				this.hitenemy = false;
 				if(this.myEnergy.scaleX <= 1.8){
-					this.myEnergy.scaleX += 0.013;
+					this.myEnergy.scaleX += 0.01;
 				}else{
 					this.myEnergy.scaleX = 2;
 				}
@@ -823,13 +856,13 @@ CoryDash.prototype =
 	updatePlatform:function(event){
 		var platformSection = event.currentTarget;
 		//Check if cory hits the ground
-		if(this.myChar.x <= platformSection.x + platformSection.width/2 && this.myChar.x >= platformSection.x-platformSection.width/2){
+		if(this.charXPos <= platformSection.x + platformSection.width/2 && this.charXPos >= platformSection.x-platformSection.width/2){
 			var platformPlane = platformSection.y - platformSection.height*0.1;
 			
 			//landing on the ground
-			if(this.ySpeed > 0 && !this.exhausted){
+			if(this.ySpeed >= 0 && !this.exhausted){
 				
-				if(this.myChar.y >= platformPlane && this.myChar.y < platformPlane + this.ySpeed){
+				if(this.myChar.y >= platformPlane && this.myChar.y <= platformPlane + this.ySpeed + this.downGravity + 10){
 					this.ySpeed = 0;
 					this.myChar.y = platformPlane;
 					this.jump = 0;
@@ -837,7 +870,7 @@ CoryDash.prototype =
 			}			
 			
 			//refresh dash on the ground
-			if(this.myChar.y >= platformPlane && this.myChar.y < platformPlane + this.dashRefreshHight){
+			if(this.myChar.y >= platformPlane && this.myChar.y <= platformPlane + this.dashRefreshHight){
 				if(this.dashtimer > this.dashTime && this.dashtimer < this.dashTime + this.dashCooldownTime){
 						this.dashtimer = this.dashTime + this.dashCooldownTime;
 				}
@@ -948,10 +981,13 @@ CoryDash.prototype =
 		this.fail = this.getLayer("button").addChild(new TGE.Text().setup({
         x:this.stage.percentageOfWidth(0.5),
         y:this.stage.percentageOfHeight(0.4),
-        text:"You fall! Continue playing using your hearts?",
+        text:"You fell! Use your heart to continue?",
         font:"bold 36px Arial",
         color:"#fff"
 		}));
+		if(this.exhausted){
+			this.fail.text = "You ran out of energy! Use your heart to continue?";
+		}
 		
 		this.cont = this.getLayer("button").addChild(new TGE.Button().setup({
         x:this.stage.percentageOfWidth(0.4),
