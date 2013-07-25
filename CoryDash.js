@@ -5,13 +5,13 @@ CoryDash = function()
 	CoryDash.superclass.constructor.call(this);
 	
 	var gameAssets = [
-		{id: 'cory_startScreen', url: 'assets/images/screens/mainmenu/start_screen.png'},
+		{id: 'cory_startScreen', url: 'assets/images/screens/mainmenu/intro_screen.png'},
 		{id: 'cory_endScreen', url: 'assets/images/screens/gameover/cory_falling.png'},
 		{id: 'cory_endScreen_exhausted', url: 'assets/images/screens/gameover/cory_tired.png'},
         {id : 'char',url : 'assets/images/cory_spriteSheet.png'},
         {id : 'platform',url : 'assets/images/ground_sprites.png'},
         {id : 'tree',url : 'assets/images/tree.png'},
-        {id : 'enemy',url : 'assets/images/evilRobot_v2.png'},
+        {id : 'enemy',url : 'assets/images/robot_spritesheet.png'},
         {id : 'explosion',url : 'assets/images/explosion_spritesheet.png'},
         {id : 'trail',url : 'assets/images/particle.png'},
 		{id : 'jump_button',url : 'assets/images/jump_button.png'},
@@ -717,7 +717,7 @@ CoryDash.prototype =
 			absorb.x += absorb.xSpeed;
 			absorb.y += absorb.ySpeed;
 		}else{
-			if(absorb.x>this.myChar.x || absorb.scaleX<0.3){
+			if(Math.abs(this.myChar.x - absorb.x) < 5 || absorb.scaleX<0.3){
 				absorb.markForRemoval();
 				this.invincible = 0;
 				this.hitenemy = false;
@@ -748,7 +748,7 @@ CoryDash.prototype =
 		this.platformStartX += gap * imageWidth;
 		for(i=0;i<length + 2;i++){
 			newPlatform[i] = new TGE.Sprite().setup({
-				y:this.stage.percentageOfHeight(1 - height),
+				y:this.stage.percentageOfHeight(1 - height),//[absolute height->]((this.characterYratio - 1)*this.myChar.y + this.stage.percentageOfHeight(1)*height)/this.characterYratio,
 				x: this.platformStartX + i*imageWidth,
 				scaleX:0.5,
 				scaleY:0.5,
@@ -775,8 +775,8 @@ CoryDash.prototype =
 
 
 			//trees
-			var p = Math.random();
-			if(p<0.4){
+		
+			if(Math.random() <0.4){
 				var tree = new TGE.Sprite().setup({
 					x:newPlatform[i].x,
 					y:newPlatform[i].y,//+	newPlatform[i].height,
@@ -794,19 +794,23 @@ CoryDash.prototype =
 			}
 
 			//enemies
-			p = Math.random();
-			if(p<0.3){
+
+			if(Math.random() < 0.3){
 				var enemy = new TGE.Sprite().setup({
 					x:newPlatform[i].x + (Math.random()-0.5)*50,
-					y:newPlatform[i].y,//+	newPlatform[i].height,
+					y:newPlatform[i].y + 10,//+	newPlatform[i].height,
 					image:"enemy",
 				})
 				enemy.scaleY = enemy.scaleX = 0.4;
 				enemy.y -= enemy.height*0.5*enemy.scaleX;
-
-
-				enemy.setImage("enemy",1,1);
-				enemy.setSpriteIndex(0);
+				enemy.setImage("enemy",1,2);
+				if(Math.random() < 0.9){
+					enemy.setSpriteIndex(0);
+				}
+				else{
+					enemy.setSpriteIndex(1);
+				}
+				
 				enemy.xPos = enemy.x;
 				this.getLayer("enemy").addChild(enemy);
 				enemy.addEventListener("update",this.updateEnemy.bind(this));
@@ -866,6 +870,7 @@ CoryDash.prototype =
 					image:"explosion",
 					scaleX: 1.5,
 					scaleY: 1.5,
+					rotation: Math.random()*360,
 				})
 
 				explosion.setImage("explosion",1,4);
@@ -908,12 +913,12 @@ CoryDash.prototype =
 	
 	updateKill:function(event){
 		var kill = event.currentTarget;
-		if (kill.y > this.stage.percentageOfHeight(0.2)){
-		kill.y -=this.stage.percentageOfHeight(0.01);
+		if (kill.y > this.stage.percentageOfHeight(0.1)){
+		kill.y -=this.stage.percentageOfHeight(0.005);
 		}
 		
-		if (kill.x < this.stage.percentageOfWidth(0.9)){
-		kill.x += 25;
+		if (kill.x < this.stage.percentageOfWidth(0.907)){
+		kill.x += this.stage.percentageOfWidth(0.06);
 		}
 		
 		kill.alpha -= 0.02;
