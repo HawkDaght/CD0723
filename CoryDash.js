@@ -14,12 +14,17 @@ CoryDash = function()
         {id : 'enemy',url : 'assets/images/robot_spritesheet.png'},
         {id : 'explosion',url : 'assets/images/explosion_spritesheet.png'},
         {id : 'trail',url : 'assets/images/particle.png'},
+        {id : 'transmit',url : 'assets/images/energy_waves.png'},
+        {id : 'laser',url : 'assets/images/laser.png'},
 		{id : 'jump_button',url : 'assets/images/jump_button.png'},
         {id : 'dash_button',url : 'assets/images/dash_button.png'},
         {id : 'energy_bar',url : 'assets/images/energyBar.png'},
         {id : 'energy_tile',url : 'assets/images/energyTile.png'},
+        {id : 'boss_energy_bar',url : 'assets/images/robot_energybar.png'},
+        {id : 'boss_energy_tile',url : 'assets/images/robot_energy.png'},
 		{id : 'energy_dmg',url : 'assets/images/energyDmg.png'},
 		{id : 'danger_glow',url : 'assets/images/danger_glow.png'},
+		{id : 'boss',url : 'assets/images/mosquito_robot.png'},
         {id : 'background_1',url : 'assets/images/background_trees.png'},
         {id : 'background_2',url : 'assets/images/background_hills.png'},
         {id : 'background_3',url : 'assets/images/background_mountains.png'},
@@ -62,6 +67,7 @@ CoryDash.prototype =
 	
 	subclassSetupLayers: function(){
 		this.CreateLayer("background");
+		this.CreateLayer("boss");
 		this.CreateLayer("platform");
 		this.CreateLayer("tree");
 		this.CreateLayer("absorb");
@@ -287,7 +293,66 @@ CoryDash.prototype =
 			alpha:0,
 		}));
 
+		this.boss = this.getLayer("boss").addChild(new TGE.Button().setup({
+			x:this.stage.percentageOfWidth(0.7),
+			y:this.stage.percentageOfHeight(0.5),
+			image:"boss"
+		}));
+		this.boss.isAlive = true;
+
+		this.bossEnergy = this.getLayer("energy").addChild(new TGE.Sprite().setup({
+			x:this.stage.percentageOfWidth(0.5),
+            y:this.stage.percentageOfHeight(0.9),
+			scaleX: 5,
+			scaleY: 0.62,
+			image:"boss_energy_tile"
+		}));
+		this.bossEnergy.max = 4.85;
+
+		this.bossEnergyBar = this.getLayer("energy").addChild(new TGE.Sprite().setup({
+			x:this.stage.percentageOfWidth(0.5),
+            y:this.stage.percentageOfHeight(0.9),
+			scaleX: 1,
+			scaleY: 1,
+			image:"boss_energy_bar"
+		}));
+
+		this.bossEnergy.x = this.bossEnergyBar.x - this.bossEnergyBar.width * this.bossEnergyBar.scaleX*0.38;	
+
 	},
+	updateBoss:function(){
+		if(this.bossEnergy.scaleX < this.bossEnergy.max){
+			this.bossEnergy.scaleX += 0.001;
+		}
+		else{
+			this.bossEnergy.scaleX = this.bossEnergy.max;
+		}
+		if(this.bossEnergy.scaleX <= 0 && this.boss.isAlive){
+			this.bossEnergy.markForRemoval();
+			this.boss.isAlive = false;
+			this.boss.xPos = this.boss.x + this.xDistance;
+		}
+		if(!this.boss.isAlive){
+
+			if(this.boss.x + this.boss.width * this.boss.scaleX < 0){
+				this.boss.markForRemoval();
+			}
+			else{
+				this.instantiateExplosion(this.boss.x + (Math.random()-0.5) *this.boss.width,this.boss.y + (Math.random()-0.5)*this.boss.height,Math.random()*0.5+0.2,10);
+				this.boss.x -= 3;
+				this.boss.y += 1;
+			}
+		}
+		else{
+			this.boss.y = (Math.sin(this.xDistance/300) - 0.5)* this.stage.percentageOfHeight(0.25) + this.stage.percentageOfHeight(0.5);
+			this.boss.x = (Math.sin(this.xDistance/1000)- 0.5) + 0.5*(Math.sin(this.xDistance/1000)*(Math.sin(this.xDistance/1000))- 0.5) * this.stage.percentageOfWidth(0.5) + this.stage.percentageOfWidth(0.7);
+		
+		}
+		//this.boss.y -= this.ySpeed * (1-this.characterYratio);
+	},
+
+
+
 /*
 	zoomEffect:function(object, originScaleX, originScaleY, xPos){
 		object.scaleX = originScaleX * this.cameraScale;
@@ -296,6 +361,73 @@ CoryDash.prototype =
 		//object.y = (yPos - this.stage.percentageOfHeight(0.5))* this.cameraScale + this.stage.percentageOfHeight(0.5);
 	},
 */
+
+
+
+	// TGE.Game method override - called every update cycle with elapsed time since last cycle started
+	subclassUpdateGame: function(elapsedTime)
+    {	
+    	this.updateBoss();
+    	this.rush();
+		if (this.reviveTimer > 0 ){
+			this.updateRevive();
+		}
+    	//this.levelText.text = this.level;
+		//stop the game if cory died.
+	    if(this.alive){
+    		this.updateChar();
+    		this.levelGenerator();
+		
+			if (this.beginning <=0){
+				if(this.hitenemy && this.myEnergy.scaleX <= 0.1){
+					this.myEnergy.scaleX -= 0;
+				}else{
+					this.myEnergy.scaleX -= (0.002 + this.myEnergy.scaleX * 0.001);
+				}
+			this.myEnergyDmg.x = this.myEnergy.x + this.myEnergy.width * this.myEnergy.scaleX/2;
+			}
+		
+			if(this.invincible > 0 ){
+				this.myEnergyDmg.scaleX = 0.2;
+				if(this.myEnergy.scaleX <= 0.2){
+					this.myEnergyDmg.x = this.stage.percentageOfWidth(0.42);
+				}
+			}
+			else{
+				this.myEnergyDmg.scaleX = 0.003;
+			}
+		
+			if(this.myEnergy.scaleX <= 0 && !this.exhausted){
+				this.myEnergy.scaleX = 0;
+				this.exhausted = true;
+			}
+
+			if(this.exhausted){
+				this.xSpeed -= this.xSpeed * 0.008;
+				this.downGravity = this.downGravityExhausted;
+				this.myEnergy.scaleX = 0;
+			}
+
+
+			if(this.myChar.y > this.stage.percentageOfHeight(1) + this.myChar.height * this.myChar.scaleY/2){
+				this.alive = false;
+				this.contPlay();
+			}
+
+	   		this.setShakeOffSet();
+			this.distance = Math.round(this.xDistance/10);
+			this.myScore = Math.floor(this.distance * 0.5 + this.enemykill);
+			this.myScoreText.text = this.myScore.toString();
+		}
+		else if(!this.alive && this.revive <=0){
+			this.xSpeed -= this.xSpeed * 0.02;
+		}
+		this.updateGlow();
+
+	},
+
+
+
 
 	setShakeOffSet: function(){
 		if(this.shakeTimer > 0){
@@ -323,70 +455,6 @@ CoryDash.prototype =
 				this.xSpeed -= (this.xSpeed - this.xSpeed_Normal)*0.05;
 			}
 		}
-	},
-
-	// TGE.Game method override - called every update cycle with elapsed time since last cycle started
-	subclassUpdateGame: function(elapsedTime)
-    {	
-    	this.rush();
-		if (this.reviveTimer > 0 ){
-		this.updateRevive();
-		}
-    	//this.levelText.text = this.level;
-		//stop the game if cory died.
-		if(this.alive){
-		
-		
-    	this.updateChar();
-
-    	this.levelGenerator();
-		
-		if (this.beginning <=0){
-			if(this.hitenemy && this.myEnergy.scaleX <= 0.1){
-				this.myEnergy.scaleX -= 0;
-			}else{
-				this.myEnergy.scaleX -= (0.002 + this.myEnergy.scaleX * 0.001);
-			}
-		this.myEnergyDmg.x = this.myEnergy.x + this.myEnergy.width * this.myEnergy.scaleX/2;
-		}
-		
-		if(this.invincible > 0 ){
-			this.myEnergyDmg.scaleX = 0.2;
-			if(this.myEnergy.scaleX <= 0.2){
-				this.myEnergyDmg.x = this.stage.percentageOfWidth(0.42);
-			}
-		}else{
-		this.myEnergyDmg.scaleX = 0.003;
-		}
-		
-		if(this.myEnergy.scaleX <= 0 && !this.exhausted){
-			this.myEnergy.scaleX = 0;
-			this.exhausted = true;
-		}
-
-		if(this.exhausted){
-			this.xSpeed -= this.xSpeed * 0.008;
-			this.downGravity = this.downGravityExhausted;
-			this.myEnergy.scaleX = 0;
-		}
-
-
-		if(this.myChar.y > this.stage.percentageOfHeight(1) + this.myChar.height * this.myChar.scaleY/2){
-			this.alive = false;
-			this.contPlay();
-		}
-
-	    this.setShakeOffSet();
-		this.distance = Math.round(this.xDistance/10);
-		this.myScore = Math.floor(this.distance * 0.5 + this.enemykill);
-		this.myScoreText.text = this.myScore.toString();
-		}else if(!this.alive && this.revive <=0){
-			this.xSpeed -= this.xSpeed * 0.02;
-		}
-
-
-		this.updateGlow();
-
 	},
 
 	updateGlow:function() {
@@ -460,13 +528,9 @@ CoryDash.prototype =
 				var f = Math.floor(Math.random() * 5);
 				this.level = 5;
 			}
-
 			this.instantiatePlatform(a,b,c);
 			this.instantiatePlatform(d,e,f);
     	}
-
-
-
 	},
 	
 	subclassEndGame: function()
@@ -643,6 +707,8 @@ CoryDash.prototype =
 		
 	},
 	
+
+
 	
 	instantiateBackground:function(image,dampen){
 
@@ -718,6 +784,72 @@ CoryDash.prototype =
 		this.backgroundObjectMoving(trail,trail.xPos);
 		trail.y += trail.ySpeed;
 	},
+
+	instantiateTransmit:function(xPos,yPos,randomRange,n){
+		var i;
+    	for(i=0;i<n;i++){
+    		var transmit = new TGE.Sprite().setup({
+    			x: xPos + (Math.random()-0.5) * randomRange,
+    			y: yPos + (Math.random()-0.5) * randomRange,
+    			scaleX:0.2,
+    			scaleY:0.2,
+    			image:"transmit",
+    		})
+    		this.getLayer("effect").addChild(transmit);
+    		transmit.addEventListener("update",this.updateTransmit.bind(this));
+   		}
+
+
+
+		
+	},
+	updateTransmit:function (event) {
+		var transmit = event.currentTarget;
+		var lerpSpeed = 0.05;
+		var speed = 5;
+		
+		transmit.x += lerpSpeed*(this.boss.x - transmit.x);
+		transmit.y -= this.ySpeed*(1-this.characterYratio);
+		transmit.y += lerpSpeed*(this.boss.y - transmit.y);
+		transmit.rotation = Math.atan((this.boss.y-transmit.y)/(this.boss.x - transmit.x)) * 180/Math.PI;
+		transmit.scaleX = transmit.scaleY = Math.abs(transmit.x - this.boss.x) * 0.0005;
+		transmit.alpha -= 0.01;
+
+		if(Math.abs(transmit.x - this.boss.x) < 5){
+			transmit.markForRemoval();
+		}
+	},
+
+	instantiateLaser:function(enemy){
+		var laser = new TGE.Sprite().setup({
+    			x: enemy.x,
+    			y: enemy.y,
+    			scaleX:1,
+    			scaleY:1,
+    			image:"laser",
+    		})
+		this.getLayer("background").addChild(laser);
+		laser.enemy = enemy;
+		laser.timer = 30;
+    	laser.addEventListener("update",this.updateLaser.bind(this));
+	},
+
+	updateLaser:function (event){
+		var laser = event.currentTarget;
+		var xDif = this.boss.x - laser.enemy.x;
+		var yDif = this.boss.y - laser.enemy.y;
+
+		laser.x = 0.5*(laser.enemy.x + this.boss.x);
+		laser.y = 0.5*(laser.enemy.y + this.boss.y);
+		laser.scaleX = Math.sqrt(xDif*xDif+yDif*yDif)/laser.width;
+		laser.rotation = Math.atan(yDif/xDif) * 180/Math.PI;
+		
+		if(laser.timer <= 0){
+			laser.markForRemoval();
+		}
+		laser.timer --;
+	},
+
 
 	instantiateAbsorb:function(n){
 		var i;
@@ -837,12 +969,14 @@ CoryDash.prototype =
 				enemy.scaleY = enemy.scaleX = 0.4;
 				enemy.y -= enemy.height*0.5*enemy.scaleX;
 				enemy.setImage("enemy",1,2);
-				if(Math.random() < 0.9){
+				if(Math.random() < 0.2){
 					enemy.setSpriteIndex(0);
+					//enemy.scaleX = enemy.scaleY;
 				}
 				else{
 					enemy.setSpriteIndex(1);
 				}
+
 				
 				enemy.xPos = enemy.x;
 				this.getLayer("enemy").addChild(enemy);
@@ -894,29 +1028,20 @@ CoryDash.prototype =
 		this.collideX = this.charWide + this.enemyWide;
 		this.collideY =  this.charTall + this.enemyTall;
 		
+		if(Math.random() < 0.1 && enemy.x < this.stage.percentageOfWidth(1) && this.boss.isAlive){
+			this.instantiateTransmit(enemy.x,enemy.y,20,1);
+		}
+		
+		//kill the enemy
 		if(this.isDashing){
 			if(Math.abs(enemy.y - this.myChar.y) < this.collideY && enemy.x < this.myChar.x + this.dashFowardDistance + this.collideX){
 				
-				var explosion = new TGE.Sprite().setup({
-					x:enemy.x,
-					y:enemy.y,
-					image:"explosion",
-					scaleX: 1.5,
-					scaleY: 1.5,
-					rotation: Math.random()*360,
-				})
 
-				explosion.setImage("explosion",1,4);
-				explosion.index = 0;
-				explosion.setSpriteIndex(explosion.index);
-				explosion.xPos = enemy.xPos;
-				this.getLayer("effect").addChild(explosion);
-				explosion.addEventListener("update",this.updateExplosion.bind(this));
-				if(this.shakeTimer < this.enemyExplosionShakingTime){
-					this.shakeTimer = this.enemyExplosionShakingTime;
-				}
-								
+				this.instantiateExplosion(enemy.x,enemy.y,1+Math.random()*0.5,this.enemyExplosionShakingTime);
+
+			
 				enemy.markForRemoval();
+				this.bossEnergy.scaleX -= 0.1;
 				
 				var kill = new TGE.Text().setup({
 					x: this.myChar.x-this.myChar.width,
@@ -961,6 +1086,28 @@ CoryDash.prototype =
 		}
 	},
 	
+	instantiateExplosion:function(xPos,yPos,scale,shakingTime){
+				var explosion = new TGE.Sprite().setup({
+					x:xPos,
+					y:yPos,
+					image:"explosion",
+					scaleX: scale,
+					scaleY: scale,
+					rotation: Math.random()*360,
+				})
+
+				explosion.setImage("explosion",1,4);
+				explosion.index = 0;
+				explosion.setSpriteIndex(explosion.index);
+				explosion.xPos = explosion.x + this.xDistance;
+				this.getLayer("effect").addChild(explosion);
+				explosion.addEventListener("update",this.updateExplosion.bind(this));
+
+				if(this.shakeTimer < shakingTime){
+					this.shakeTimer = shakingTime;
+				}
+	},
+
 	updateExplosion:function(event){
 		var explosion = event.currentTarget;
 		if(explosion.index < 4){
