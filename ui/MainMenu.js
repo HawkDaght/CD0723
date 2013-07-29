@@ -8,12 +8,16 @@ MainMenu = function(width,height)
 
     // Fade in
     this.setupFade(0.5,"#fff");
-	this.addChild(new TGE.Button().setup({
+    var startScreen = this.addChild(new TGE.Button().setup({
         x:this.percentageOfWidth(0.5),
         y:this.percentageOfHeight(0.5),
         image:"cory_startScreen",
-        pressFunction:this.playGame.bind(this)
+        pressFunction:this.playGame.bind(this),
+
     }));
+    startScreen.scaleX = this.percentageOfWidth(1)/startScreen.width;
+    startScreen.scaleY = this.percentageOfHeight(1)/startScreen.height;
+
 	
 	 this.addChild(new TGE.Text().setup({
         x:this.percentageOfWidth(0.5),
