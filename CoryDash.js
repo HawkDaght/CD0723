@@ -844,7 +844,6 @@ CoryDash.prototype =
 		laser.timer --;
 	},
 
-
 	instantiateAbsorb:function(n){
 		var i;
 		for(i=0; i<n; i++){
