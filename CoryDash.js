@@ -6,7 +6,6 @@ CoryDash = function()
 	
 	var gameAssets = [
 <<<<<<< HEAD
-<<<<<<< HEAD
 
 		{id: 'cory_startScreen', url: 'assets/images/screens/mainmenu/start_screen.png'},
 		{id: 'cory_endScreen', url: 'assets/images/screens/gameover/cory_falling.png'},
@@ -16,11 +15,6 @@ CoryDash = function()
 		{id: 'cory_endScreen', url: 'assets/images/screens/gameover/cory_falling.png'},
 		{id: 'cory_endScreen_exhausted', url: 'assets/images/screens/gameover/cory_tired.png'},
 
-=======
-		{id: 'cory_startScreen', url: 'assets/images/screens/mainmenu/intro_screen.png'},
-		{id: 'cory_endScreen', url: 'assets/images/screens/gameover/cory_falling.png'},
-		{id: 'cory_endScreen_exhausted', url: 'assets/images/screens/gameover/cory_tired.png'},
->>>>>>> Gui
         {id : 'char',url : 'assets/images/cory_spriteSheet.png'},
 =======
 		{id: 'cory_startScreen', url: 'assets/images/screens/mainmenu/intro_screen.png'},
@@ -49,8 +43,10 @@ CoryDash = function()
         {id : 'background_3',url : 'assets/images/background_mountains.png'},
 		{id : 'tutorial_01',url : 'assets/images/tutorial01.png'},
 		{id : 'tutorial_02',url : 'assets/images/tutorial02.png'},
+	
 		{id : 'cory_music',url: 'assets/audio/Game_Demo_Electronic.mp3', assetType:"audio"},
 		{id : 'explosion_audio',url: 'assets/audio/explosion.wav', assetType:"audio"},
+		{id : 'dash_audio',url: 'assets/audio/dash.wav', assetType:"audio"},
     ];
 
 
@@ -85,23 +81,14 @@ CoryDash.prototype =
     },
 	
 	subclassSetupLayers: function(){
-<<<<<<< HEAD
 		this.CreateLayer("background");
 		this.CreateLayer("boss");
-=======
-		this.CreateLayer("background");	
->>>>>>> Gui
 		this.CreateLayer("platform");
 		this.CreateLayer("tree");
 		this.CreateLayer("absorb");
 		this.CreateLayer("char");
 		this.CreateLayer("enemy");
-<<<<<<< HEAD
 
-=======
-		this.CreateLayer("transmit");
-		this.CreateLayer("boss");
->>>>>>> Gui
 		this.CreateLayer("effect");
 		this.CreateLayer("energy");
 		this.CreateLayer("button");
@@ -136,7 +123,6 @@ CoryDash.prototype =
 		// Clear everything in the scene
 		this.clearScene();
 		// Game Entities
-<<<<<<< HEAD
 		this.myChar = null
 		this.charXPos = 200; // the character's origin xPos. When dash the char will move forward a little and back to this pos after dash
 		this.charScale =  0.35;
@@ -171,38 +157,6 @@ CoryDash.prototype =
 		this.dashTime = 20;//The frame numbers of a dash
 		this.dashCooldownTime = 80;//the time needed to cooldown a dash when the char is in the air (dash will refresh when the char is grounded)
 		this.dashtimer = this.dashTime + this.dashCooldownTime;
-=======
-		this.myChar = null;
-
-		this.charXPos = 200;
-		this.charScale =  0.35;
-		// Game State
-
-		//the distance the character have travelled.
-		this.xDistance = 0;
-
-
-		this.xSpeed_Normal = 18;
-		this.xSpeed_Rush = 25;
-		this.rushTimer = 0;
-
-		this.xSpeed = 18;
-		this.ySpeed = 0;
-		this.downGravityNormal = 1.4;
-		this.downGravityExhausted = 0.1;
-		this.downGravity = 0.8;
-		this.upGravity = 0.4;
-		this.minUpSpeed = 5;
-		this.upSpeed = 15;
-		this.jump = 0;
-		this.pressedJump = false;
-		this.highestBoundary = 0.2;
-		this.dashExtraSpeed = 20;
-		this.dashFowardDistance = 128;
-		this.dashTime = 20;
-		this.dashCooldownTime = 80;
-		this.dashtimer = 100;
->>>>>>> Gui
 		this.isDashing = false;
 		this.dashingNow = 0;
 		this.dashRefreshHight = 80;//the vertical distance to the platform required for refreshing dash without waiting for cooldown
@@ -225,10 +179,6 @@ CoryDash.prototype =
 		this.invincible = 0;
 		this.hitenemy = false;
 <<<<<<< HEAD
-<<<<<<< HEAD
-=======
-		this.revive = 0;
->>>>>>> Gui
 		this.reviveTimer = 0;
 =======
 		this.revive = 0;
@@ -238,10 +188,6 @@ CoryDash.prototype =
 			y: 0,
 		}
 		
-<<<<<<< HEAD
-=======
-		this.bossExist = 0;
->>>>>>> Gui
 		this.hitByEnemy = false;
 
 		this.exhausted = false;//see if the player dies because of lack of energy
@@ -279,6 +225,14 @@ CoryDash.prototype =
 		this.instantiatePlatform(d,e,f);
 		this.beginning = 10;
 	
+		this.dangerGlow = this.getLayer("energy").addChild(new TGE.Sprite().setup({
+			x:this.stage.percentageOfWidth(0.5),
+            y:this.stage.percentageOfHeight(0.098),
+			alpha:0,
+			scaleX: 0.4,
+			scaleY: 0.4,
+			image:"danger_glow"
+		}));
 		
 		this.myEnergy = this.getLayer("energy").addChild(new TGE.Sprite().setup({
 			x:this.stage.percentageOfWidth(0.42),
@@ -343,11 +297,7 @@ CoryDash.prototype =
 		this.audioManager.Play({id:"cory_music", loop:true});
 
 
-<<<<<<< HEAD
 		
-=======
-		this.level = 1;
->>>>>>> Gui
 
 		/*
     	this.levelText = this.getLayer("score").addChild(new TGE.Text().setup({
@@ -377,7 +327,6 @@ CoryDash.prototype =
 			alpha:0,
 		}));
 
-<<<<<<< HEAD
 		this.boss = this.getLayer("boss").addChild(new TGE.Button().setup({
 			x:this.stage.percentageOfWidth(0.7),
 			y:this.stage.percentageOfHeight(0.5),
@@ -506,81 +455,6 @@ CoryDash.prototype =
 		}
 		//this.boss.y -= this.ySpeed * (1-this.characterYratio);
 	},
-=======
-	},
-
-
-	// TGE.Game method override - called every update cycle with elapsed time since last cycle started
-	subclassUpdateGame: function(elapsedTime)
-    {	
-    	this.rush();
-		if(this.bossExist == 1){
-			this.updateBoss();
-		}
-		
-		if (this.reviveTimer > 0 ){
-			this.updateRevive();
-		}
-    	//this.levelText.text = this.level;
-		//stop the game if cory died.
-	    if(this.alive){
-    		this.updateChar();
-    		this.levelGenerator();
-		
-			if (this.beginning <=0){
-				if(this.hitenemy && this.myEnergy.scaleX <= 0.1){
-					this.myEnergy.scaleX -= 0;
-				}else{
-					this.myEnergy.scaleX -= (0.002 + this.myEnergy.scaleX * 0.001);
-				}
-			this.myEnergyDmg.x = this.myEnergy.x + this.myEnergy.width * this.myEnergy.scaleX/2;
-			}
-		
-			if(this.invincible > 0 ){
-				this.myEnergyDmg.scaleX = 0.2;
-				if(this.myEnergy.scaleX <= 0.2){
-					this.myEnergyDmg.x = this.stage.percentageOfWidth(0.42);
-				}
-			}
-			else{
-				this.myEnergyDmg.scaleX = 0.003;
-			}
-		
-			if(this.myEnergy.scaleX <= 0 && !this.exhausted){
-				this.myEnergy.scaleX = 0;
-				this.exhausted = true;
-			}
-
-			if(this.exhausted){
-				this.xSpeed -= this.xSpeed * 0.008;
-				this.downGravity = this.downGravityExhausted;
-				this.myEnergy.scaleX = 0;
-			}
-
-			if(this.myChar.y > this.stage.percentageOfHeight(1) + this.myChar.height * this.myChar.scaleY/2 && this.reviveTimer == 0){
-				this.alive = false;
-				this.contPlay();
-			}
-			
-			if(this.xDistance>15000 && this.bossExist == 0){
-				var b = Math.random();
-				if(b > 0.95){
-				this.instantiateBoss();
-				}			
-			}
-			
-	   		this.setShakeOffSet();
-			this.distance = Math.round(this.xDistance/10);
-			this.myScore = Math.floor(this.distance * 0.5 + this.enemykill);
-			this.myScoreText.text = this.myScore.toString();
-			
-		}
-		else if(!this.alive && this.revive <=0){
-			this.xSpeed -= this.xSpeed * 0.02;
-		}
-		this.updateDangerGlow();
-	},
->>>>>>> Gui
 
 	setShakeOffSet: function(){
 		if(this.shakeTimer > 0){
@@ -602,7 +476,6 @@ CoryDash.prototype =
 			this.rushTimer --;
 			this.xSpeed = this.xSpeed_Rush;
 			this.jump = 0;
-<<<<<<< HEAD
 		}
 		else{
 			if(this.xSpeed > this.xSpeed_Normal){
@@ -634,23 +507,15 @@ CoryDash.prototype =
 				this.myEnergy.scaleX -= 0;
 			}else{
 				this.myEnergy.scaleX -= 0.003;
-=======
-		}
-		else{
-			if(this.xSpeed > this.xSpeed_Normal){
-				this.xSpeed -= (this.xSpeed - this.xSpeed_Normal)*0.05;
->>>>>>> Gui
 			}
+		this.myEnergyDmg.x = this.myEnergy.x + this.myEnergy.width * this.myEnergy.scaleX/2;
 		}
-	},
-
-	updateDangerGlow:function() {
+		
 		if(this.myEnergy.scaleX < 0.5){
-			this.dangerGlow.alpha = Math.sin(this.xDistance/200)* 0.5 + 0.5;
+			this.dangerGlow.alpha = Math.sin(this.xDistance/80)*0.8+0.2;
 		}else{
 			this.dangerGlow.alpha = 0;
 		}
-<<<<<<< HEAD
 		//check if just got hit by enemy
 		if(this.invincible > 0 ){
 			this.myEnergyDmg.scaleX = 0.2;
@@ -671,46 +536,14 @@ CoryDash.prototype =
 			this.myEnergy.scaleX = 0;
 			this.exhausted = true;
 		}
-=======
-		this.dangerText.alpha = this.dangerGlow.alpha;
-	},
->>>>>>> Gui
 
-	levelUp:function(currentlevel){
-		var levelLength = 50;
-		if(this.level == i && this.xDistance > this.stage.percentageOfWidth(levelLength) * i && this.xDistance < this.stage.percentageOfWidth(levelLength) * (i+1)){
-			this.level ++;
-			this.shakeTimer = 300;
-			this.rushTimer = 250;
+		if(this.exhausted){
+			this.xSpeed -= this.xSpeed * 0.008;
+			this.downGravity = 0.1;
+			this.myEnergy.scaleX = 0;
 		}
-	},
 
-	levelGenerator:function(){
-		this.levelUp(1);
-		this.levelUp(2);
-		this.levelUp(3);
-		this.levelUp(4);
 
-		if(this.xDistance + this.stage.percentageOfWidth(1.5) > this.platformStartX){
-			if(this.level == 1){
-				var a = Math.random() * 2;
-				var b = Math.floor(Math.random() * 5)/10 + 0.3;
-				var c = Math.floor(Math.random() * 8)+3;			
-				var d = c* (-1 + 0.3*Math.random());
-				var e = b - 0.8 + Math.floor(Math.random() * 5)/10;
-				var f = Math.floor(Math.random() * 8)+3;
-				this.level = 1;
-			}
-			else if(this.level == 2){
-				var a = Math.random() * 3;
-				var b = Math.floor(Math.random() * 5)/10 + 0.3;
-				var c = Math.floor(Math.random() * 8)+2;			
-				var d = c* (-1 + 0.6*Math.random());
-				var e = b - 0.8 + Math.floor(Math.random() * 5)/10;
-				var f = Math.floor(Math.random() * 8)+2;
-				this.level = 2;
-
-<<<<<<< HEAD
 		if(this.myChar.y > this.stage.percentageOfWidth(1)){
 			this.alive = false;
 			this.audioManager.StopAll();
@@ -761,8 +594,6 @@ CoryDash.prototype =
 				var f = Math.floor(Math.random() * 8)+2;
 				this.level = 2;
 
-=======
->>>>>>> Gui
 			}
 			else if(this.level == 3){
 				var a = Math.random() * 4;
@@ -795,6 +626,8 @@ CoryDash.prototype =
 			this.instantiatePlatform(d,e,f);
     	}
 	},
+	
+	
 	
 	subclassEndGame: function()
     {
@@ -905,6 +738,7 @@ CoryDash.prototype =
     		this.dashtimer = 0;
     		this.isDashing = true;
     		this.myChar.x = this.charXPos + this.dashFowardDistance;
+			this.audioManager.Play({id:"dash_audio", loop:false});
     		this.pressedJump =false;
     		if(this.jump >1){
     			this.jump =1;
@@ -946,13 +780,6 @@ CoryDash.prototype =
 			this.ySpeed = 0;
 		}
 
-<<<<<<< HEAD
-=======
-		if(this.isDashing){
-			this.ySpeed = 0;
-		}
-
->>>>>>> Gui
 		if(this.beginning <= 0){
     		this.dashtimer += 1;
 		}
@@ -980,101 +807,6 @@ CoryDash.prototype =
 		
 	},
 	
-<<<<<<< HEAD
-=======
-	instantiateBoss: function(){
-		this.boss = this.getLayer("boss").addChild(new TGE.Button().setup({
-			x:this.stage.percentageOfWidth(1.2),
-			y:this.stage.percentageOfHeight(0.5),
-			image:"boss"
-		}));		
-		this.boss.isAlive = true;
-		this.boss.xBase = 1.2;
-		this.bossEnergy = this.getLayer("energy").addChild(new TGE.Sprite().setup({
-			x:this.stage.percentageOfWidth(0.5),
-            y:this.stage.percentageOfHeight(0.9),
-			scaleX: 0.1,
-			scaleY: 0.62,
-			image:"boss_energy_tile"
-		}));
-		this.bossEnergy.max = 4.85;
-
-		this.bossEnergyBar = this.getLayer("energy").addChild(new TGE.Sprite().setup({
-			x:this.stage.percentageOfWidth(0.5),
-            y:this.stage.percentageOfHeight(0.9),
-			scaleX: 1,
-			scaleY: 1,
-			image:"boss_energy_bar"
-		}));
-
-		this.bossEnergy.x = this.bossEnergyBar.x - this.bossEnergyBar.width * this.bossEnergyBar.scaleX*0.38;
-		this.boss.ready = false;
-		this.bossExist = 1;
-		this.boss.cd = 0;
-		this.boss.heal = 0;
-		this.boss.healTime = 100;
-	},
-	
-	updateBoss:function(){
-		if(!this.boss.ready){
-			if(this.bossEnergy.scaleX < this.bossEnergy.max){
-			this.bossEnergy.scaleX += 0.05;
-			}else{
-			this.boss.ready = true;
-			}
-		}
-		if(this.bossEnergy.scaleX <= 0){
-			this.bossEnergy.markForRemoval();
-			this.boss.isAlive = false;
-			this.boss.xPos = this.boss.x + this.xDistance;
-		}
-		if(!this.boss.isAlive){
-			if(this.boss.x + this.boss.width * this.boss.scaleX < 0){
-				this.boss.markForRemoval();
-				this.bossEnergyBar.markForRemoval();
-				this.bossExist = 2;
-			}
-			else{
-				this.instantiateExplosion(this.boss.x + (Math.random()-0.5) *this.boss.width,this.boss.y + (Math.random()-0.5)*this.boss.height,Math.random()*0.5+0.2,10);
-				this.boss.x -= 3;
-				this.boss.y += 1;
-			}
-		}
-		else{
-			//Boss dancing around
-			if(this.boss.xBase >0.7){
-				this.boss.xBase -= 0.0025;
-			}
-			this.boss.y = (Math.sin(this.xDistance/300) - 0.5)* this.stage.percentageOfHeight(0.25) + this.stage.percentageOfHeight(0.5);
-			this.boss.x = (Math.sin(this.xDistance/1000)- 0.5) + 0.5*(Math.pow(Math.sin(this.xDistance/1000), 2)- 0.5) * this.stage.percentageOfWidth(0.5) + this.stage.percentageOfWidth(this.boss.xBase);
-			if(this.boss.cd >0){
-				this.boss.cd -= 1;
-			}
-			if(this.boss.ready && this.bossEnergy.scaleX <2.4 && this.boss.cd == 0){
-				this.bossHeal();
-			}
-		}
-		//this.boss.y -= this.ySpeed * (1-this.characterYratio);
-		
-	},
-	
-	bossHeal: function(){
-		if (this.boss.heal < this.boss.healTime){
-			this.boss.heal ++;
-			if(this.boss.heal%12 == 0){
-			var e = this.getLayer("enemy").numChildren();
-				for (i = 0; i < e; i ++){
-					var enemy = this.getLayer("enemy").getChildAt(i);
-					this.instantiateTransmit(enemy);
-				}
-			}
-		}else{
-			this.boss.cd = 600;
-			this.boss.heal = 0;
-		}
-	},
-	
->>>>>>> Gui
 	instantiateBackground:function(image,dampen){
 
 		this.setbackgroundSprite(image,dampen,1);
@@ -1103,20 +835,28 @@ CoryDash.prototype =
 		}
 
 		this.getLayer("background").addChild(background);
+		background.handBreak = 1;
 		background.dampen = dampen;
 		background.addEventListener("update",this.updateBackground.bind(this));
 
 	},
 
 	updateBackground:function(event){
+		
 		var background = event.currentTarget;
-		background.x -= this.xSpeed * background.dampen;
+		background.x -= this.xSpeed * background.dampen * background.handBreak;
 		background.y = this.stage.percentageOfHeight(0.5) + (this.stage.percentageOfHeight(0.5)-this.myChar.y) * (1-this.characterYratio) * background.dampen;
 		//background.y -= this.ySpeed * (1-this.characterYratio) * background.dampen;
 		if(background.x < -background.width*background.scaleX/2){
 			background.x += 2 * background.width*background.scaleX;
 		}
 		this.ObjectShake(background);
+		if(!this.alive && background.handBreak > 0){
+		
+		background.handBreak *= 0.9;
+		}else{
+		background.handBreak *= 1;
+		}
 
 	},
 
@@ -1148,7 +888,6 @@ CoryDash.prototype =
 		trail.y += trail.ySpeed;
 	},
 
-<<<<<<< HEAD
 	instantiateTransmit:function(xPos,yPos,randomRange,n){
 		var i;
     	for(i=0;i<n;i++){
@@ -1163,31 +902,12 @@ CoryDash.prototype =
     		transmit.addEventListener("update",this.updateTransmit.bind(this));
    		}		
 	},
-=======
-	instantiateTransmit:function(enemy){
-		var dx =  this.boss.x - enemy.x;
-		var dy =  this.boss.y - enemy.y;
-		var angel = Math.atan(dy/dx)*(180 / Math.PI);	
-		var transmit = new TGE.Sprite().setup({
-			x: enemy.x,
-			y: enemy.y,
-			scaleX:0.5,
-			scaleY:0.5,
-			rotation: angel,
-			image:"transmit",
-			});
-		this.getLayer("transmit").addChild(transmit);
-		transmit.addEventListener("update",this.updateTransmit.bind(this));
-	},
-	
->>>>>>> Gui
 	updateTransmit:function (event) {
 		var transmit = event.currentTarget;
 		var lerpSpeed = 0.05;
 		var speed = 5;
 		
 		transmit.x += lerpSpeed*(this.boss.x - transmit.x);
-<<<<<<< HEAD
 		transmit.y -= this.ySpeed*(1-this.characterYratio);
 		transmit.y += lerpSpeed*(this.boss.y - transmit.y);
 		transmit.rotation = Math.atan((this.boss.y-transmit.y)/(this.boss.x - transmit.x)) * 180/Math.PI;
@@ -1196,24 +916,6 @@ CoryDash.prototype =
 
 		if(Math.abs(transmit.x - this.boss.x) < 5){
 			transmit.markForRemoval();
-=======
-		transmit.y = transmit.y - this.ySpeed*(1-this.characterYratio) + lerpSpeed*(this.boss.y - transmit.y);
-		if(this.boss.x - transmit.x < 0){
-			transmit.rotation = Math.atan((this.boss.y-transmit.y)/(this.boss.x - transmit.x)) * 180/Math.PI - 180;
-		}else{
-			transmit.rotation = Math.atan((this.boss.y-transmit.y)/(this.boss.x - transmit.x)) * 180/Math.PI;
-		}
-		//transmit.scaleX = transmit.scaleY = Math.abs(transmit.x - this.boss.x) * 0.0005;
-		transmit.scaleX -= 0.005;
-		transmit.scaleY -= 0.005;
-		transmit.alpha -= 0.002;
-
-		if(Math.abs(transmit.x - this.boss.x) < this.boss.width*this.boss.scaleX/2 || transmit.scaleX < 0.1){
-			transmit.markForRemoval();
-			if(this.bossEnergy.scaleX < this.bossEnergy.max){
-				this.bossEnergy.scaleX += 0.03;
-			}
->>>>>>> Gui
 		}
 	},
 
@@ -1280,27 +982,19 @@ CoryDash.prototype =
 			absorb.y += absorb.ySpeed;
 		}else{
 <<<<<<< HEAD
-<<<<<<< HEAD
 			if(absorb.x>this.myChar.x || absorb.scaleX<0.3){
 =======
 			if(Math.abs(this.myChar.x - absorb.x) < 5 || absorb.scaleX<0.3){
 >>>>>>> Atlas
-=======
-			if(Math.abs(this.myChar.x - absorb.x) < 5 || absorb.scaleX<0.3){
->>>>>>> Gui
 				absorb.markForRemoval();
 				this.invincible = 0;
 				this.hitenemy = false;
 				if(this.myEnergy.scaleX <= 1.8){
 <<<<<<< HEAD
-<<<<<<< HEAD
 					this.myEnergy.scaleX += 0.013;
 =======
 					this.myEnergy.scaleX += 0.01;
 >>>>>>> Atlas
-=======
-					this.myEnergy.scaleX += 0.01;
->>>>>>> Gui
 				}else{
 					this.myEnergy.scaleX = 2;
 				}
@@ -1441,7 +1135,6 @@ CoryDash.prototype =
 		this.collideX = this.charWide + this.enemyWide;
 		this.collideY =  this.charTall + this.enemyTall;
 		
-<<<<<<< HEAD
 		if(Math.random() < 0.1 && enemy.x < this.stage.percentageOfWidth(1) && this.boss.isAlive){
 			this.instantiateTransmit(enemy.x,enemy.y,20,1);
 		}
@@ -1457,16 +1150,6 @@ CoryDash.prototype =
 				enemy.markForRemoval();
 				this.bossEnergy.scaleX -= 0.1;
 				
-=======
-		//kill the enemy
-		if(this.isDashing){
-			if(Math.abs(enemy.y - this.myChar.y) < this.collideY && enemy.x < this.myChar.x + this.dashFowardDistance + this.collideX){
-				this.instantiateExplosion(enemy.x,enemy.y,1+Math.random()*0.5,this.enemyExplosionShakingTime);
-				enemy.markForRemoval();
-				if(this.bossExist == 1 && this.boss.ready){
-					this.bossEnergy.scaleX -= 0.1;
-				}
->>>>>>> Gui
 				var kill = new TGE.Text().setup({
 					x: this.myChar.x-this.myChar.width,
 					y: this.myChar.y,
@@ -1478,13 +1161,9 @@ CoryDash.prototype =
 				this.getLayer("score").addChild(kill);
 				kill.addEventListener("update",this.updateKill.bind(this));
 				this.instantiateAbsorb(15);
-				this.hitEnemy = true;
+				this.hitenemy = true;
 				this.audioManager.Play({id:"explosion_audio", loop:false});
-			}else{
-				this.hitEnemy = false;
 			}
-		}else{
-			this.hitEnemy = false;
 		}
 		/*if(!this.isDashing){
 			if(Math.abs(enemy.y - this.myChar.y) < this.collideY && enemy.x < this.myChar.x + this.dashFowardDistance + this.collideX && this.invincible == 0 && this.dashingNow ==0)
@@ -1549,7 +1228,6 @@ CoryDash.prototype =
 		this.backgroundObjectMoving(explosion,explosion.xPos);
 		
 	},
-<<<<<<< HEAD
 	
 	contPlay:function()
 	{
@@ -1652,8 +1330,6 @@ CoryDash.prototype =
 		}
 
 	},
-=======
->>>>>>> Gui
 	
 	contPlay:function()
 	{
@@ -1661,13 +1337,10 @@ CoryDash.prototype =
 		this.fail = this.getLayer("button").addChild(new TGE.Text().setup({
         x:this.stage.percentageOfWidth(0.5),
         y:this.stage.percentageOfHeight(0.4),
-        text:"You fell! Use your heart to continue?",
+        text:"You fall! Continue playing using your hearts?",
         font:"bold 36px Arial",
         color:"#fff"
 		}));
-		if(this.exhausted){
-			this.fail.text = "You ran out of energy! Use your heart to continue?";
-		}
 		
 		this.cont = this.getLayer("button").addChild(new TGE.Button().setup({
         x:this.stage.percentageOfWidth(0.4),
@@ -1700,19 +1373,12 @@ CoryDash.prototype =
 		this.cont.markForRemoval();
 		this.over.markForRemoval();
 		this.myEnergy.scaleX = 2;
-		this.myEnergyDmg.x = this.myEnergy.x + this.myEnergy.width * this.myEnergy.scaleX/2;
-		this.myChar.y = this.stage.percentageOfHeight(1.05);
-		this.exhausted = false;
-		this.downGravity = this.downGravityNormal;
-		this.alive = true;
-		this.beginning =20;
 	},
 	
 	updateRevive: function(elapsedTime){
 		if(this.reviveTimer >10){
 		this.risingSpeed = 10;
-		}
-		this.myChar.y -= this.stage.percentageOfHeight(0.008);
+		this.myChar.y -= this.risingSpeed*0.8;
 		var p = this.getLayer("platform").numChildren();
 			for (i = 0; i < p; i ++){
 				var platform = this.getLayer("platform").getChildAt(i);
@@ -1728,27 +1394,21 @@ CoryDash.prototype =
 			for (i = 0; i < e; i ++){
 				var enemy = this.getLayer("enemy").getChildAt(i);
 				enemy.y += this.risingSpeed;
-			}
-		if (this.xSpeed < this.xSpeed_Normal){
-			this.xSpeed += this.xSpeed_Normal * 0.05;
-		}else{
-			this.xSpeed = this.xSpeed_Normal
-		}
-		if(this.reviveTimer>0){
+			}	
+		
+		if(this.reviveTimer>=10){
 		this.reviveTimer -= 1;
+		}
+		}
+		if(this.reviveTimer <= 10){
+			this.alive = true;
+			this.beginning =10;
+			this.reviveTimer -= 0.1;
+		}else if (this.reviveTimer<=0){
+			this.reviveTimer = 0;
 		}
 		
 	},
-	backgroundObjectMoving:function(object,xPos){
-		object.y -= (1-this.characterYratio)*this.ySpeed;
-		object.x = xPos - this.xDistance;
-		if(object.x  < - object.width){
-			object.markForRemoval();
-		}
-		//this.zoomEffect(object,1,1,object.x);
-		this.ObjectShake(object);
-	},
-	
 	getScore: function()
     {
 		return this.myScore;
