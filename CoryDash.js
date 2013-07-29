@@ -5,23 +5,10 @@ CoryDash = function()
 	CoryDash.superclass.constructor.call(this);
 	
 	var gameAssets = [
-<<<<<<< HEAD
-
-		{id: 'cory_startScreen', url: 'assets/images/screens/mainmenu/start_screen.png'},
-		{id: 'cory_endScreen', url: 'assets/images/screens/gameover/cory_falling.png'},
-		{id: 'cory_endScreen_exhausted', url: 'assets/images/screens/gameover/cory_tired.png'},
-
-		{id: 'cory_startScreen', url: 'assets/images/screens/mainmenu/start_screen.png'},
-		{id: 'cory_endScreen', url: 'assets/images/screens/gameover/cory_falling.png'},
-		{id: 'cory_endScreen_exhausted', url: 'assets/images/screens/gameover/cory_tired.png'},
-
-        {id : 'char',url : 'assets/images/cory_spriteSheet.png'},
-=======
 		{id: 'cory_startScreen', url: 'assets/images/screens/mainmenu/intro_screen.png'},
 		{id: 'cory_endScreen', url: 'assets/images/screens/gameover/cory_falling.png'},
 		{id: 'cory_endScreen_exhausted', url: 'assets/images/screens/gameover/cory_tired.png'},
         {id : 'char',url : 'assets/images/cory_sprites.png'},
->>>>>>> Atlas
         {id : 'platform',url : 'assets/images/ground_sprites.png'},
         {id : 'tree',url : 'assets/images/tree.png'},
         {id : 'enemy',url : 'assets/images/robot_spritesheet.png'},
@@ -43,10 +30,8 @@ CoryDash = function()
         {id : 'background_3',url : 'assets/images/background_mountains.png'},
 		{id : 'tutorial_01',url : 'assets/images/tutorial01.png'},
 		{id : 'tutorial_02',url : 'assets/images/tutorial02.png'},
-	
 		{id : 'cory_music',url: 'assets/audio/Game_Demo_Electronic.mp3', assetType:"audio"},
 		{id : 'explosion_audio',url: 'assets/audio/explosion.wav', assetType:"audio"},
-		{id : 'dash_audio',url: 'assets/audio/dash.wav', assetType:"audio"},
     ];
 
 
@@ -178,11 +163,7 @@ CoryDash.prototype =
 		this.enemyExplosionShakingTime = 10;
 		this.invincible = 0;
 		this.hitenemy = false;
-<<<<<<< HEAD
-		this.reviveTimer = 0;
-=======
 		this.revive = 0;
->>>>>>> Atlas
 		this.shakeOffSet = {
 			x: 0,
 			y: 0,
@@ -225,14 +206,6 @@ CoryDash.prototype =
 		this.instantiatePlatform(d,e,f);
 		this.beginning = 10;
 	
-		this.dangerGlow = this.getLayer("energy").addChild(new TGE.Sprite().setup({
-			x:this.stage.percentageOfWidth(0.5),
-            y:this.stage.percentageOfHeight(0.098),
-			alpha:0,
-			scaleX: 0.4,
-			scaleY: 0.4,
-			image:"danger_glow"
-		}));
 		
 		this.myEnergy = this.getLayer("energy").addChild(new TGE.Sprite().setup({
 			x:this.stage.percentageOfWidth(0.42),
@@ -484,80 +457,13 @@ CoryDash.prototype =
 		}
 	},
 
-<<<<<<< HEAD
-	// TGE.Game method override - called every update cycle with elapsed time since last cycle started
-	subclassUpdateGame: function(elapsedTime)
-    {	
-    	this.rush();
-
-    	//this.levelText.text = this.level;
-		//stop the game if cory died.
-		if (this.reviveTimer > 0 ){
-		this.updateRevive();
-		}
-		
-		if (this.alive){
-		
-    	this.updateChar();
-
-    	this.levelGenerator();
-		
-		if (this.beginning <=0){
-			if(this.hitenemy && this.myEnergy.scaleX <= 0.1){
-				this.myEnergy.scaleX -= 0;
-			}else{
-				this.myEnergy.scaleX -= 0.003;
-			}
-		this.myEnergyDmg.x = this.myEnergy.x + this.myEnergy.width * this.myEnergy.scaleX/2;
-		}
-		
-		if(this.myEnergy.scaleX < 0.5){
-			this.dangerGlow.alpha = Math.sin(this.xDistance/80)*0.8+0.2;
-		}else{
-			this.dangerGlow.alpha = 0;
-		}
-		//check if just got hit by enemy
-		if(this.invincible > 0 ){
-			this.myEnergyDmg.scaleX = 0.2;
-			if(this.myEnergy.scaleX <= 0.2){
-				this.myEnergyDmg.x = this.stage.percentageOfWidth(0.42);
-			}
-=======
 	updateGlow:function() {
 		if(this.myEnergy.scaleX < 0.5){
 			this.dangerGlow.alpha = Math.sin(this.xDistance/200)* 0.5 + 0.5;
->>>>>>> Atlas
 		}else{
 			this.dangerGlow.alpha = 0;
 		}
-<<<<<<< HEAD
-		
-		if(this.myEnergy.scaleX <= 0 && !this.exhausted){
-			this.myEnergy.scaleX = 0;
-			this.exhausted = true;
-		}
-
-		if(this.exhausted){
-			this.xSpeed -= this.xSpeed * 0.008;
-			this.downGravity = 0.1;
-			this.myEnergy.scaleX = 0;
-		}
-
-
-		if(this.myChar.y > this.stage.percentageOfWidth(1)){
-			this.alive = false;
-			this.audioManager.StopAll();
-			this.contPlay();
-		}
-
-	    this.setShakeOffSet();
-		this.distance = Math.round(this.xDistance/10);
-		this.myScore = Math.floor(this.distance * 0.5 + this.enemykill);
-		this.myScoreText.text = this.myScore.toString();
-		}
-=======
 		this.dangerText.alpha = this.dangerGlow.alpha;
->>>>>>> Atlas
 	},
 
 	levelUp:function(currentlevel){
@@ -626,8 +532,6 @@ CoryDash.prototype =
 			this.instantiatePlatform(d,e,f);
     	}
 	},
-	
-	
 	
 	subclassEndGame: function()
     {
@@ -738,7 +642,6 @@ CoryDash.prototype =
     		this.dashtimer = 0;
     		this.isDashing = true;
     		this.myChar.x = this.charXPos + this.dashFowardDistance;
-			this.audioManager.Play({id:"dash_audio", loop:false});
     		this.pressedJump =false;
     		if(this.jump >1){
     			this.jump =1;
@@ -835,28 +738,20 @@ CoryDash.prototype =
 		}
 
 		this.getLayer("background").addChild(background);
-		background.handBreak = 1;
 		background.dampen = dampen;
 		background.addEventListener("update",this.updateBackground.bind(this));
 
 	},
 
 	updateBackground:function(event){
-		
 		var background = event.currentTarget;
-		background.x -= this.xSpeed * background.dampen * background.handBreak;
+		background.x -= this.xSpeed * background.dampen;
 		background.y = this.stage.percentageOfHeight(0.5) + (this.stage.percentageOfHeight(0.5)-this.myChar.y) * (1-this.characterYratio) * background.dampen;
 		//background.y -= this.ySpeed * (1-this.characterYratio) * background.dampen;
 		if(background.x < -background.width*background.scaleX/2){
 			background.x += 2 * background.width*background.scaleX;
 		}
 		this.ObjectShake(background);
-		if(!this.alive && background.handBreak > 0){
-		
-		background.handBreak *= 0.9;
-		}else{
-		background.handBreak *= 1;
-		}
 
 	},
 
@@ -981,20 +876,12 @@ CoryDash.prototype =
 			absorb.x += absorb.xSpeed;
 			absorb.y += absorb.ySpeed;
 		}else{
-<<<<<<< HEAD
-			if(absorb.x>this.myChar.x || absorb.scaleX<0.3){
-=======
 			if(Math.abs(this.myChar.x - absorb.x) < 5 || absorb.scaleX<0.3){
->>>>>>> Atlas
 				absorb.markForRemoval();
 				this.invincible = 0;
 				this.hitenemy = false;
 				if(this.myEnergy.scaleX <= 1.8){
-<<<<<<< HEAD
-					this.myEnergy.scaleX += 0.013;
-=======
 					this.myEnergy.scaleX += 0.01;
->>>>>>> Atlas
 				}else{
 					this.myEnergy.scaleX = 2;
 				}
@@ -1319,7 +1206,6 @@ CoryDash.prototype =
 		
 	},
 	backgroundObjectMoving:function(object,xPos){
-		if(this.alive == true){
 		object.y -= (1-this.characterYratio)*this.ySpeed;
 		object.x = xPos - this.xDistance;
 		if(object.x  < - object.width){
@@ -1327,88 +1213,8 @@ CoryDash.prototype =
 		}
 		//this.zoomEffect(object,1,1,object.x);
 		this.ObjectShake(object);
-		}
-
 	},
 	
-	contPlay:function()
-	{
-		
-		this.fail = this.getLayer("button").addChild(new TGE.Text().setup({
-        x:this.stage.percentageOfWidth(0.5),
-        y:this.stage.percentageOfHeight(0.4),
-        text:"You fall! Continue playing using your hearts?",
-        font:"bold 36px Arial",
-        color:"#fff"
-		}));
-		
-		this.cont = this.getLayer("button").addChild(new TGE.Button().setup({
-        x:this.stage.percentageOfWidth(0.4),
-        y:this.stage.percentageOfHeight(0.55),
-		mouseEnabled: true,
-		width: 150,
-        text:"Yes",
-        font:"bold 36px Arial",
-        color:"#fff",
-		pressFunction: this.reviveCory.bind(this)
-		}));
-		
-		this.over = this.getLayer("button").addChild(new TGE.Button().setup({
-        x:this.stage.percentageOfWidth(0.6),
-        y:this.stage.percentageOfHeight(0.55),
-		mouseEnabled:true,
-		width: 150,
-        text:"No",
-        font:"bold 36px Arial",
-        color:"#fff",
-		pressFunction: this.EndGame.bind(this)
-		}));
-	},
-	
-	reviveCory: function(){
-		this.reviveTimer = 100;		
-		this.myChar.ySpeed =0;
-		this.myChar.rotation =0;
-		this.fail.markForRemoval();
-		this.cont.markForRemoval();
-		this.over.markForRemoval();
-		this.myEnergy.scaleX = 2;
-	},
-	
-	updateRevive: function(elapsedTime){
-		if(this.reviveTimer >10){
-		this.risingSpeed = 10;
-		this.myChar.y -= this.risingSpeed*0.8;
-		var p = this.getLayer("platform").numChildren();
-			for (i = 0; i < p; i ++){
-				var platform = this.getLayer("platform").getChildAt(i);
-				platform.y += this.risingSpeed;
-			}
-			
-		var t = this.getLayer("tree").numChildren();
-			for (i = 0; i < t; i ++){
-				var tree = this.getLayer("tree").getChildAt(i);
-				tree.y += this.risingSpeed;
-			}
-		var e = this.getLayer("enemy").numChildren();
-			for (i = 0; i < e; i ++){
-				var enemy = this.getLayer("enemy").getChildAt(i);
-				enemy.y += this.risingSpeed;
-			}	
-		
-		if(this.reviveTimer>=10){
-		this.reviveTimer -= 1;
-		}
-		}
-		if(this.reviveTimer <= 10){
-			this.alive = true;
-			this.beginning =10;
-			this.reviveTimer -= 0.1;
-		}else if (this.reviveTimer<=0){
-			this.reviveTimer = 0;
-		}
-		
-	},
 	getScore: function()
     {
 		return this.myScore;
