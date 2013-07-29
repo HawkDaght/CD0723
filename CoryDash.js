@@ -188,7 +188,6 @@ CoryDash.prototype =
 		this.myChar.setSpriteIndex(6);
 		this.dashSprite = 3;
 		
-
 		//instantiate the first platforms within the starting screen
 		this.instantiatePlatform(0,0.5,3)
 		this.instantiatePlatform(-2,0.7,2);
